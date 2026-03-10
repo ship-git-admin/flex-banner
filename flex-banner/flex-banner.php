@@ -24,7 +24,7 @@ require_once FB_PLUGIN_DIR . 'includes/class-fb-shortcode.php';
 if (file_exists(FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php')) {
   require FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
   $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-    'https://github.com/user/flex-banner-repo/', // DUMMY URL
+    'https://github.com/aurora-ship-sato/flex-banner/', // DUMMY URL
     __FILE__,
     'flex-banner'
   );
