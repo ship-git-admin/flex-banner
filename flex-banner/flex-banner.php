@@ -3,7 +3,7 @@
 /**
  * Plugin Name: フレキシブルバナーグループ
  * Description: 柔軟なバナー管理プラグイン。グリッド/スライダー表示・テキストオーバーレイ・表示スケジュール・複製機能搭載。ショートコード [flex_banner id="POST_ID"] で表示。
- * Version: 2.0.1
+ * Version: 2.0.2
  * Author: Custom
  */
 
@@ -23,8 +23,8 @@ require_once FB_PLUGIN_DIR . 'includes/class-fb-shortcode.php';
 // Plugin Update Checker Integration
 if (file_exists(FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php')) {
   require FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
-  $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-    'https://github.com/aurora-ship-sato/flex-banner/', // DUMMY URL
+  $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+    'https://github.com/aurora-ship-sato/flex-banner/',
     __FILE__,
     'flex-banner'
   );
