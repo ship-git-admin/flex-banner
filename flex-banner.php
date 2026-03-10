@@ -3,7 +3,7 @@
 /**
  * Plugin Name: フレキシブルバナーグループ
  * Description: 柔軟なバナー管理プラグイン。グリッド/スライダー表示・テキストオーバーレイ・表示スケジュール・複製機能搭載。ショートコード [flex_banner id="POST_ID"] で表示。
- * Version: 2.0.6
+ * Version: 2.0.7
  * Author: Custom
  */
 
@@ -31,6 +31,3 @@ if (file_exists(FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker
   $myUpdateChecker->setAuthentication('REDACTED_GITHUB_TOKEN');
   $myUpdateChecker->setBranch('main');
 }
-
-
-//REDACTED_GITHUB_TOKEN
