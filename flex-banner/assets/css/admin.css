@@ -1,0 +1,525 @@
+/* ====================================================================
+   Flex Banner Plugin — 管理画面スタイル (v2.0)
+   ==================================================================== */
+
+/* ベースリセット */
+#fb-editor-wrapper,
+#fb-editor-wrapper *,
+#fb-editor-wrapper *::before,
+#fb-editor-wrapper *::after {
+  box-sizing: border-box;
+}
+
+#fb-editor-wrapper {
+  max-width: 1100px;
+  margin: 20px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  説明帯                                                               */
+/* ------------------------------------------------------------------ */
+.fb-editor-intro {
+  background: #fff;
+  border-left: 4px solid #72aee6;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.fb-editor-intro p {
+  margin: 0;
+  font-size: 13px;
+  color: #3c434a;
+}
+
+/* ------------------------------------------------------------------ */
+/*  ショートコードボックス                                                  */
+/* ------------------------------------------------------------------ */
+.fb-shortcode-box {
+  padding: 5px 0;
+}
+
+.fb-shortcode-box p {
+  margin-bottom: 8px;
+}
+
+.fb-shortcode-input-wrap {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.fb-shortcode-input-wrap input {
+  font-family: monospace;
+  background: #f0f0f1;
+}
+
+/* ------------------------------------------------------------------ */
+/*  コンテナ設定ボックス                                                    */
+/* ------------------------------------------------------------------ */
+.fb-container-settings-box {
+  padding: 5px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  セクション（行）                                                        */
+/* ------------------------------------------------------------------ */
+.fb-row {
+  background: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 30px;
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+  border-radius: 6px;
+  overflow: hidden;
+  --fb-preview-cols: 1;
+  --fb-preview-gap: 12px;
+}
+
+/* 行ヘッダー */
+.fb-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f6f7f7;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+}
+
+.fb-row-title-grab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: move;
+  flex-shrink: 0;
+}
+
+.fb-drag-handle {
+  color: #8c8f94;
+}
+
+.fb-row-label {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1d2327;
+}
+
+/* モード切り替え */
+.fb-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fb-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  color: #646970;
+  transition: background 0.15s, color 0.15s;
+}
+
+.fb-mode-btn:first-of-type {
+  border-right: 1px solid #c3c4c7;
+}
+
+.fb-mode-btn .dashicons {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.fb-mode-btn.is-active {
+  background: #2271b1;
+  color: #fff;
+}
+
+.fb-mode-btn:hover:not(.is-active) {
+  background: #f0f0f1;
+}
+
+/* ヘッダー右ボタン群 */
+.fb-row-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.fb-row-header-actions .button-link {
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  セクション設定パネル                                                     */
+/* ------------------------------------------------------------------ */
+.fb-row-settings-panel {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ececec;
+  background: #fafafa;
+}
+
+.fb-grid-settings,
+.fb-slider-settings {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fb-grid-settings label,
+.fb-slider-settings label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #50575e;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.fb-inline-check {
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.fb-size-guide {
+  font-size: 11px;
+  color: #646970;
+  background: #f0f0f1;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid #dcdcde;
+  white-space: nowrap;
+}
+
+.fb-hidden {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/*  アイテムラッパー                                                        */
+/* ------------------------------------------------------------------ */
+.fb-items-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 80px;
+  padding: 16px;
+  background: #f0f0f1;
+  border: 2px dashed #c3c4c7;
+  border-radius: 0;
+  gap: var(--fb-preview-gap, 12px);
+}
+
+/* ------------------------------------------------------------------ */
+/*  バナーアイテム                                                          */
+/* ------------------------------------------------------------------ */
+.fb-item {
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  width: calc((100% - (var(--fb-preview-gap, 12px) * (var(--fb-preview-cols, 1) - 1))) / var(--fb-preview-cols, 1));
+  min-width: 240px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fb-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f6f7f7;
+  border-bottom: 1px solid #dcdcde;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fb-item-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fb-item-drag-handle {
+  cursor: move;
+  color: #8c8f94;
+}
+
+.fb-item-label {
+  white-space: nowrap;
+}
+
+.fb-item-url-preview {
+  font-weight: normal;
+  color: #646970;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.fb-item-url-preview.is-empty {
+  color: #a7aaad;
+  font-style: italic;
+}
+
+.fb-item-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #dba617;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 3px;
+  padding: 1px 4px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.fb-item-badge--text {
+  background: #2271b1;
+}
+
+.fb-item-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.fb-item-actions .button-link {
+  font-size: 12px;
+}
+
+.fb-item-body {
+  padding: 14px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  フィールドグループ                                                       */
+/* ------------------------------------------------------------------ */
+.fb-field-group {
+  margin-bottom: 14px;
+}
+
+.fb-field-group:last-child {
+  margin-bottom: 0;
+}
+
+.fb-field-group>label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #1d2327;
+  margin-bottom: 6px;
+}
+
+.fb-field-group>label .dashicons {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #72aee6;
+}
+
+.fb-field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.fb-field-row .fb-field-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  画像アップローダー                                                       */
+/* ------------------------------------------------------------------ */
+.fb-item-images {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  background: #fafafa;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.fb-item-images .fb-field-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.fb-image-preview {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  margin-bottom: 8px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fb-image-preview .dashicons-format-image {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #dcdcde;
+}
+
+.fb-image-preview img {
+  width: 100%;
+  max-height: 140px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.fb-image-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.fb-image-actions .button {
+  flex: 1;
+  font-size: 11px;
+  height: 26px;
+  line-height: 24px;
+  padding: 0 8px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/*  チェックボックスラベル                                                   */
+/* ------------------------------------------------------------------ */
+.fb-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  コラプシブル（テキストオーバーレイ / スケジュール）                          */
+/* ------------------------------------------------------------------ */
+.fb-collapsible {
+  border: 1px solid #e2e4e7;
+  border-radius: 4px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.fb-collapsible__toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: #f6f7f7;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d2327;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.fb-collapsible__toggle .dashicons {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #72aee6;
+}
+
+.fb-collapsible__toggle:hover {
+  background: #ebebec;
+}
+
+.fb-collapsible.is-open .fb-collapsible__toggle {
+  border-bottom-color: #e2e4e7;
+  background: #eaf3fb;
+  color: #2271b1;
+}
+
+.fb-collapsible.is-open .fb-collapsible__toggle .dashicons {
+  color: #2271b1;
+}
+
+.fb-collapsible__arrow {
+  margin-left: auto;
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.fb-collapsible__body {
+  padding: 12px;
+  background: #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/*  セクションフッター / アクション                                            */
+/* ------------------------------------------------------------------ */
+.fb-row-footer {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  background: #fff;
+}
+
+.fb-actions {
+  margin-top: 30px;
+  text-align: center;
+  border-top: 1px solid #dcdcde;
+  padding-top: 20px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  ユーティリティ                                                          */
+/* ------------------------------------------------------------------ */
+.text-error {
+  color: #d63638;
+  text-decoration: none;
+}
+
+.text-error:hover {
+  color: #b32d2e;
+}
+
+/* jQuery UI ドラッグ中のプレースホルダー */
+.ui-state-highlight {
+  background: #fff9e6;
+  border: 2px dashed #ffb900;
+  visibility: visible !important;
+  min-width: 80px;
+  min-height: 60px;
+  border-radius: 4px;
+}
