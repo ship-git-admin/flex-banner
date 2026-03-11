@@ -41,9 +41,12 @@ class Flex_Banner_Shortcode_Display
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_sp = intval(get_post_meta($post_id, '_flex_banner_container_padding_sp', true));
-    if ($container_padding_sp <= 0) {
-      $container_padding_sp = 20;
+    $container_padding_pc = intval(get_post_meta($post_id, '_flex_banner_container_padding_pc', true)); // デフォルト0
+    $container_padding_sp = get_post_meta($post_id, '_flex_banner_container_padding_sp', true);
+    if ($container_padding_sp === '') {
+      $container_padding_sp = 20; // 未設定時のみ20
+    } else {
+      $container_padding_sp = intval($container_padding_sp);
     }
 
     // スライダーが含まれる場合はJSをエンキュー
@@ -65,9 +68,11 @@ class Flex_Banner_Shortcode_Display
     <style>
       #<?php echo esc_attr($container_id); ?> {
         max-width: <?php echo intval($container_width); ?>px;
+        padding-left: <?php echo intval($container_padding_pc); ?>px;
+        padding-right: <?php echo intval($container_padding_pc); ?>px;
       }
 
-      @media screen and (max-width: <?php echo intval($container_width + 40); ?>px) {
+      @media screen and (max-width: 767px) {
         #<?php echo esc_attr($container_id); ?> {
           padding-left: <?php echo intval($container_padding_sp); ?>px;
           padding-right: <?php echo intval($container_padding_sp); ?>px;

@@ -126,9 +126,12 @@ class Flex_Banner_Meta_Box
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_sp = intval(get_post_meta($post->ID, '_flex_banner_container_padding_sp', true));
-    if ($container_padding_sp <= 0) {
-      $container_padding_sp = 20;
+    $container_padding_pc = intval(get_post_meta($post->ID, '_flex_banner_container_padding_pc', true)); // デフォルト0でOK
+    $container_padding_sp = get_post_meta($post->ID, '_flex_banner_container_padding_sp', true);
+    if ($container_padding_sp === '') {
+      $container_padding_sp = 20; // 未設定時のみ20
+    } else {
+      $container_padding_sp = intval($container_padding_sp);
     }
   ?>
     <div class="fb-container-settings-box">
@@ -142,9 +145,16 @@ class Flex_Banner_Meta_Box
           </td>
         </tr>
         <tr>
+          <th style="padding:6px 0;font-size:12px;">PC側余白 (左右)</th>
+          <td style="padding:6px 0;">
+            <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="200" style="width:80px;"> px
+            <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
+          </td>
+        </tr>
+        <tr>
           <th style="padding:6px 0;font-size:12px;">SP側余白 (左右)</th>
           <td style="padding:6px 0;">
-            <input type="number" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="60" style="width:80px;"> px
+            <input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="100" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
           </td>
         </tr>
@@ -431,9 +441,13 @@ class Flex_Banner_Meta_Box
       $cw = min(2560, max(320, intval($_POST['fb_container_width'])));
       update_post_meta($post_id, '_flex_banner_container_width', $cw);
     }
+    if (isset($_POST['fb_container_padding_pc'])) {
+      $cpc = min(200, max(0, intval($_POST['fb_container_padding_pc'])));
+      update_post_meta($post_id, '_flex_banner_container_padding_pc', $cpc);
+    }
     if (isset($_POST['fb_container_padding_sp'])) {
-      $cp = min(60, max(0, intval($_POST['fb_container_padding_sp'])));
-      update_post_meta($post_id, '_flex_banner_container_padding_sp', $cp);
+      $cps = min(100, max(0, intval($_POST['fb_container_padding_sp'])));
+      update_post_meta($post_id, '_flex_banner_container_padding_sp', $cps);
     }
 
     $allowed_modes     = array('grid', 'slider');

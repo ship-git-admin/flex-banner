@@ -13,7 +13,8 @@ jQuery(document).ready(function ($) {
     placeholder: 'ui-state-highlight',
     axis: 'y',
     update: function () {
-      /* 必要に応じてインデックス更新 */ }
+      /* 必要に応じてインデックス更新 */
+    }
   });
 
   /* ================================================================== */
@@ -53,10 +54,14 @@ jQuery(document).ready(function ($) {
     if (!$row || !$row.length) return;
 
     var mode = $row.data('mode') || 'grid';
+    var totalWidth = getContainerWidth();
+    var paddingPC = parseInt($('#fb-container-padding-pc-input').val()) || 0;
+    var paddingSP = parseInt($('#fb-container-padding-sp-input').val()) || 0;
+
     if (mode === 'slider') {
-      // スライダーモードは推奨サイズ = コンテナ幅全体
-      var cw = getContainerWidth();
-      $row.find('.fb-guide-pc').html('PC: 100% (推奨: <strong>' + cw + 'px</strong>)');
+      // スライダーモードは推奨サイズ = コンテナ内側の有効幅
+      var effectiveCW = totalWidth - (paddingPC * 2);
+      $row.find('.fb-guide-pc').html('PC: 100% (推奨: <strong>' + effectiveCW + 'px</strong>)');
       $row.find('.fb-guide-sp').html('スマホ: <strong>100%</strong>');
       return;
     }
@@ -68,21 +73,22 @@ jQuery(document).ready(function ($) {
     if (isNaN(gapPC)) gapPC = 12;
     if (isNaN(gapSP)) gapSP = 10;
 
-    var totalWidth = getContainerWidth();
-
     // PC推奨サイズ
-    var itemWidth = (totalWidth - (gapPC * (cols - 1))) / cols;
+    var effectiveWidthPC = totalWidth - (paddingPC * 2);
+    var itemWidthPC = (effectiveWidthPC - (gapPC * (cols - 1))) / cols;
     var pcText;
     if (cols === 1) {
-      pcText = '100% (推奨: <strong>' + totalWidth + 'px</strong>)';
+      pcText = '100% (推奨: <strong>' + Math.floor(effectiveWidthPC) + 'px</strong>)';
     } else {
-      pcText = Math.floor(100 / cols) + '% (推奨幅: <strong>' + Math.floor(itemWidth) + 'px</strong>)';
+      pcText = Math.floor(100 / cols) + '% (推奨幅: <strong>' + Math.floor(itemWidthPC) + 'px</strong>)';
     }
     $row.find('.fb-guide-pc').html('PC: ' + pcText);
 
     // SP推奨サイズ
+    var effectiveWidthSP = 375 - (paddingSP * 2); // 標準的なモバイル幅375pxを基準に算出
+    var itemWidthSP = (effectiveWidthSP - (gapSP * (colsSP - 1))) / colsSP;
     var spText = (colsSP === 1) ? '100%' : '50%';
-    $row.find('.fb-guide-sp').html('スマホ: <strong>' + spText + '</strong>');
+    $row.find('.fb-guide-sp').html('スマホ: ' + spText + ' (推奨幅: <strong>' + Math.floor(itemWidthSP) + 'px</strong>)');
 
     // 管理画面プレビュー用のCSS変数
     $row.css('--fb-preview-cols', cols);
@@ -100,9 +106,9 @@ jQuery(document).ready(function ($) {
   });
 
   /* ================================================================== */
-  /*  コンテナ幅変更時：全セクションの推奨サイズを再計算                          */
+  /*  コンテナ設定変更時：全セクションの推奨サイズを再計算                          */
   /* ================================================================== */
-  $(document).on('input change', '#fb-container-width-input', function () {
+  $(document).on('input change', '#fb-container-width-input, #fb-container-padding-pc-input, #fb-container-padding-sp-input', function () {
     $container.find('.fb-row').each(function () {
       updatePreviewStyles($(this));
     });
