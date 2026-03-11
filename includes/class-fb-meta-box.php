@@ -126,7 +126,8 @@ class Flex_Banner_Meta_Box
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_pc = intval(get_post_meta($post->ID, '_flex_banner_container_padding_pc', true)); // デフォルト0でOK
+    $container_padding_pc = intval(get_post_meta($post->ID, '_flex_banner_container_padding_pc', true));
+    $container_padding_tab = intval(get_post_meta($post->ID, '_flex_banner_container_padding_tab', true));
     $container_padding_sp = get_post_meta($post->ID, '_flex_banner_container_padding_sp', true);
     if ($container_padding_sp === '') {
       $container_padding_sp = 20; // 未設定時のみ20
@@ -145,16 +146,23 @@ class Flex_Banner_Meta_Box
           </td>
         </tr>
         <tr>
-          <th style="padding:6px 0;font-size:12px;">PC側余白 (左右)</th>
+          <th style="padding:6px 0;font-size:12px;">PC側余白 (1025px~)</th>
           <td style="padding:6px 0;">
-            <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="200" style="width:80px;"> px
+            <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="300" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
           </td>
         </tr>
         <tr>
-          <th style="padding:6px 0;font-size:12px;">SP側余白 (左右)</th>
+          <th style="padding:6px 0;font-size:12px;">TB側余白 (768~1024px)</th>
           <td style="padding:6px 0;">
-            <input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="100" style="width:80px;"> px
+            <input type="number" id="fb-container-padding-tab-input" name="fb_container_padding_tab" value="<?php echo esc_attr($container_padding_tab); ?>" min="0" max="200" style="width:80px;"> px
+            <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding:6px 0;font-size:12px;">SP側余白 (~767px)</th>
+          <td style="padding:6px 0;">
+            <input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="150" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
           </td>
         </tr>
@@ -442,11 +450,15 @@ class Flex_Banner_Meta_Box
       update_post_meta($post_id, '_flex_banner_container_width', $cw);
     }
     if (isset($_POST['fb_container_padding_pc'])) {
-      $cpc = min(200, max(0, intval($_POST['fb_container_padding_pc'])));
+      $cpc = min(300, max(0, intval($_POST['fb_container_padding_pc'])));
       update_post_meta($post_id, '_flex_banner_container_padding_pc', $cpc);
     }
+    if (isset($_POST['fb_container_padding_tab'])) {
+      $cpt = min(200, max(0, intval($_POST['fb_container_padding_tab'])));
+      update_post_meta($post_id, '_flex_banner_container_padding_tab', $cpt);
+    }
     if (isset($_POST['fb_container_padding_sp'])) {
-      $cps = min(100, max(0, intval($_POST['fb_container_padding_sp'])));
+      $cps = min(150, max(0, intval($_POST['fb_container_padding_sp'])));
       update_post_meta($post_id, '_flex_banner_container_padding_sp', $cps);
     }
 

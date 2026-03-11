@@ -108,7 +108,7 @@ jQuery(document).ready(function ($) {
   /* ================================================================== */
   /*  コンテナ設定変更時：全セクションの推奨サイズを再計算                          */
   /* ================================================================== */
-  $(document).on('input change', '#fb-container-width-input, #fb-container-padding-pc-input, #fb-container-padding-sp-input', function () {
+  $(document).on('input change', '#fb-container-width-input, #fb-container-padding-pc-input, #fb-container-padding-tab-input, #fb-container-padding-sp-input', function () {
     $container.find('.fb-row').each(function () {
       updatePreviewStyles($(this));
     });

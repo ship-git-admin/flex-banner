@@ -41,7 +41,8 @@ class Flex_Banner_Shortcode_Display
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_pc = intval(get_post_meta($post_id, '_flex_banner_container_padding_pc', true)); // デフォルト0
+    $container_padding_pc = intval(get_post_meta($post_id, '_flex_banner_container_padding_pc', true));
+    $container_padding_tab = intval(get_post_meta($post_id, '_flex_banner_container_padding_tab', true));
     $container_padding_sp = get_post_meta($post_id, '_flex_banner_container_padding_sp', true);
     if ($container_padding_sp === '') {
       $container_padding_sp = 20; // 未設定時のみ20
@@ -66,12 +67,22 @@ class Flex_Banner_Shortcode_Display
     ob_start();
 ?>
     <style>
+      /* PC (1025px ~) */
       #<?php echo esc_attr($container_id); ?> {
         max-width: <?php echo intval($container_width); ?>px;
         padding-left: <?php echo intval($container_padding_pc); ?>px;
         padding-right: <?php echo intval($container_padding_pc); ?>px;
       }
 
+      /* Tablet (768px ~ 1024px) */
+      @media screen and (max-width: 1024px) {
+        #<?php echo esc_attr($container_id); ?> {
+          padding-left: <?php echo intval($container_padding_tab); ?>px;
+          padding-right: <?php echo intval($container_padding_tab); ?>px;
+        }
+      }
+
+      /* Smartphone (~ 767px) */
       @media screen and (max-width: 767px) {
         #<?php echo esc_attr($container_id); ?> {
           padding-left: <?php echo intval($container_padding_sp); ?>px;
