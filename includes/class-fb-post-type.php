@@ -15,22 +15,24 @@ class Flex_Banner_Post_Type
 
   public function register_post_type()
   {
+    $manage_cap = apply_filters('flex_banner_manage_capability', 'manage_options');
     $args = array(
       'label'               => 'フレキシブルバナー',
       'public'              => false, // Not publicly queryable on frontend as a single page
       'publicly_queryable'  => false,
       'show_ui'             => true, // Show in admin menu
       'show_in_menu'        => true,
-      'capability_type'     => 'post',
+      'capability_type'     => array('flex_banner', 'flex_banners'),
       'capabilities' => array(
-        'edit_post'          => 'manage_options',
-        'read_post'          => 'manage_options',
-        'delete_post'        => 'manage_options',
-        'edit_posts'         => 'manage_options',
-        'edit_others_posts'  => 'manage_options',
-        'delete_posts'       => 'manage_options',
-        'publish_posts'      => 'manage_options',
-        'read_private_posts' => 'manage_options',
+        'edit_post'          => 'edit_flex_banner',
+        'read_post'          => 'read_flex_banner',
+        'delete_post'        => 'delete_flex_banner',
+        'edit_posts'         => $manage_cap,
+        'edit_others_posts'  => $manage_cap,
+        'delete_posts'       => $manage_cap,
+        'publish_posts'      => $manage_cap,
+        'read_private_posts' => $manage_cap,
+        'create_posts'       => $manage_cap,
       ),
       'map_meta_cap'        => true,
       'hierarchical'        => false,
