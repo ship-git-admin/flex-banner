@@ -22,6 +22,17 @@ class Flex_Banner_Post_Type
       'show_ui'             => true, // Show in admin menu
       'show_in_menu'        => true,
       'capability_type'     => 'post',
+      'capabilities' => array(
+        'edit_post'          => 'manage_options',
+        'read_post'          => 'manage_options',
+        'delete_post'        => 'manage_options',
+        'edit_posts'         => 'manage_options',
+        'edit_others_posts'  => 'manage_options',
+        'delete_posts'       => 'manage_options',
+        'publish_posts'      => 'manage_options',
+        'read_private_posts' => 'manage_options',
+      ),
+      'map_meta_cap'        => true,
       'hierarchical'        => false,
       'supports'            => array('title'), // Only title, content managed via meta box
       'menu_icon'           => 'dashicons-format-gallery',
