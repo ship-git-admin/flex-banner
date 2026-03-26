@@ -3,7 +3,7 @@
 /**
  * Plugin Name: フレキシブルバナーグループ
  * Description: 柔軟なバナー管理プラグイン。グリッド/スライダー表示・テキストオーバーレイ・表示スケジュール・複製機能搭載。ショートコード [flex_banner id="POST_ID"] で表示。
- * Version: 2.2.2
+ * Version: 2.2.3
  * Author: Custom
  */
 

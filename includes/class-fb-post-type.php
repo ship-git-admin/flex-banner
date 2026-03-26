@@ -24,9 +24,9 @@ class Flex_Banner_Post_Type
       'show_in_menu'        => true,
       'capability_type'     => array('flex_banner', 'flex_banners'),
       'capabilities' => array(
-        'edit_post'          => 'edit_flex_banner',
-        'read_post'          => 'read_flex_banner',
-        'delete_post'        => 'delete_flex_banner',
+        'edit_post'          => $manage_cap,
+        'read_post'          => $manage_cap,
+        'delete_post'        => $manage_cap,
         'edit_posts'         => $manage_cap,
         'edit_others_posts'  => $manage_cap,
         'delete_posts'       => $manage_cap,
