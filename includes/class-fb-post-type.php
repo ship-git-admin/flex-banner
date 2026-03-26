@@ -58,7 +58,7 @@ class Flex_Banner_Post_Type
     if ($screen && $screen->id === 'edit-flex_banner_group') {
 ?>
       <div class="notice notice-info is-dismissible fb-admin-notice" style="border-left-color: #00a0d2; padding: 12px 20px;">
-        <h3 style="margin: 0 0 10px 0; font-size: 16px;">🐒 猿でもわかる！フレキシブルバナーの使い方</h3>
+        <h3 style="margin: 0 0 10px 0; font-size: 16px;">💡 フレキシブルバナーの使い方ガイド</h3>
         <ol style="margin: 0 0 10px 20px; list-style-type: decimal;">
           <li style="margin-bottom: 5px;">一番上の<b>「新規追加」</b>ボタンを押して、バナーセット（画像やURLの集まり）を作ります。</li>
           <li style="margin-bottom: 5px;">保存すると、この一覧表に<b>「ショートコード」(例: [flex_banner id="123"])</b> が出ます。</li>
