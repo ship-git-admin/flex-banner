@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.2.5');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.2.5', true);
+    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.3.0');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.3.0', true);
   }
 
   public function render_shortcode($atts)
