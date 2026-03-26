@@ -8,7 +8,7 @@ class Flex_Banner_Post_Type
 
   public function __construct()
   {
-    add_action('init', array($this, 'register_post_type'));
+    add_action('init', array($this, 'register_post_type'), 20);
     add_filter('manage_flex_banner_group_posts_columns', array($this, 'add_custom_columns'));
     add_action('manage_flex_banner_group_posts_custom_column', array($this, 'render_custom_columns'), 10, 2);
   }
@@ -24,25 +24,21 @@ class Flex_Banner_Post_Type
       'show_in_menu'        => true,
       'capability_type'     => 'post',
       'capabilities' => array(
-        'edit_post'              => $manage_cap,
-        'read_post'              => $manage_cap,
-        'delete_post'            => $manage_cap,
-        'edit_posts'             => $manage_cap,
-        'edit_others_posts'      => $manage_cap,
-        'delete_posts'           => $manage_cap,
-        'publish_posts'          => $manage_cap,
-        'read_private_posts'     => $manage_cap,
-        'create_posts'           => $manage_cap,
-        'edit_private_posts'     => $manage_cap,
-        'edit_published_posts'   => $manage_cap,
-        'delete_private_posts'   => $manage_cap,
-        'delete_published_posts' => $manage_cap,
-        'delete_others_posts'    => $manage_cap,
+        'edit_post'          => $manage_cap,
+        'read_post'          => $manage_cap,
+        'delete_post'        => $manage_cap,
+        'edit_posts'         => $manage_cap,
+        'edit_others_posts'  => $manage_cap,
+        'delete_posts'       => $manage_cap,
+        'publish_posts'      => $manage_cap,
+        'read_private_posts' => $manage_cap,
+        'create_posts'       => $manage_cap,
       ),
       'map_meta_cap'        => true,
       'hierarchical'        => false,
       'supports'            => array('title'), // Only title, content managed via meta box
       'menu_icon'           => 'dashicons-format-gallery',
+      'menu_position'       => 5,
       'has_archive'         => false,
       'rewrite'            => false,
     );
