@@ -211,6 +211,9 @@ class Flex_Banner_Shortcode_Display
     $caption_btn_text = isset($item['caption_btn_text']) ? trim($item['caption_btn_text']) : '';
     $caption_btn_url  = isset($item['caption_btn_url'])  ? trim($item['caption_btn_url'])  : '';
 
+    $url = $this->format_banner_url($url);
+    $caption_btn_url = $this->format_banner_url($caption_btn_url);
+
     $img_pc_data = $img_pc_id ? wp_get_attachment_image_src($img_pc_id, 'full') : false;
     $img_sp_data = $img_sp_id ? wp_get_attachment_image_src($img_sp_id, 'full') : false;
 
@@ -269,6 +272,27 @@ class Flex_Banner_Shortcode_Display
       </a><?php
         endif;
       }
+
+  /* ------------------------------------------------------------------ */
+  /*  ユーティリティ機能                                                    */
+  /* ------------------------------------------------------------------ */
+
+  private function format_banner_url($link)
+  {
+    $link = trim($link);
+    if (empty($link)) {
+      return '';
     }
 
-    new Flex_Banner_Shortcode_Display();
+    // 絶対URL、アンカー、クエリ、mailto、tel などはそのまま返す
+    if (preg_match('/^(https?:\/\/|mailto:|tel:|#|\?)/i', $link)) {
+      return $link;
+    }
+
+    // スラッシュから始まる場合でもそうでない場合でも、サイトのhome_urlを起点とする
+    $link = ltrim($link, '/');
+    return home_url('/' . $link);
+  }
+}
+
+new Flex_Banner_Shortcode_Display();
