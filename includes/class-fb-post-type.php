@@ -22,7 +22,8 @@ class Flex_Banner_Post_Type
       'publicly_queryable'  => false,
       'show_ui'             => true, // Show in admin menu
       'show_in_menu'        => true,
-      'capability_type'     => 'post',
+      'capability_type'     => array('flex_banner', 'flex_banners'),
+      'map_meta_cap'        => true,
       'hierarchical'        => false,
       'supports'            => array('title'), // Only title, content managed via meta box
       'menu_icon'           => 'dashicons-format-gallery',
