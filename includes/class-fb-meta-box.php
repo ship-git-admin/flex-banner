@@ -146,21 +146,21 @@ class Flex_Banner_Meta_Box
           </td>
         </tr>
         <tr>
-          <th style="padding:6px 0;font-size:12px;">PC側余白 (1025px~)</th>
+          <th style="padding:6px 0;font-size:12px;">PC：外側の余白 (1025px〜)</th>
           <td style="padding:6px 0;">
             <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="300" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
           </td>
         </tr>
         <tr>
-          <th style="padding:6px 0;font-size:12px;">TB側余白 (768~1024px)</th>
+          <th style="padding:6px 0;font-size:12px;">タブレット：外側の余白 (768〜1024px)</th>
           <td style="padding:6px 0;">
             <input type="number" id="fb-container-padding-tab-input" name="fb_container_padding_tab" value="<?php echo esc_attr($container_padding_tab); ?>" min="0" max="200" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
           </td>
         </tr>
         <tr>
-          <th style="padding:6px 0;font-size:12px;">SP側余白 (~767px)</th>
+          <th style="padding:6px 0;font-size:12px;">スマホ：外側の余白 (〜767px)</th>
           <td style="padding:6px 0;">
             <input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="150" style="width:80px;"> px
             <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
