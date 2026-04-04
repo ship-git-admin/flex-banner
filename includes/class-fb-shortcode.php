@@ -137,9 +137,11 @@ class Flex_Banner_Shortcode_Display
     $cols_sp = isset($row['cols_sp']) ? intval($row['cols_sp']) : 1;
     $gap_pc  = isset($row['gap_pc'])  ? intval($row['gap_pc'])  : 12;
     $gap_sp  = isset($row['gap_sp'])  ? intval($row['gap_sp'])  : 10;
+    $mb_pc   = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
+    $mb_sp   = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
 
     $row_class = sprintf('fb-row fb-row--pc-%d fb-row--sp-%d', $cols_pc, $cols_sp);
-    $row_style = sprintf('--fb-gap-pc:%dpx;--fb-gap-sp:%dpx;', $gap_pc, $gap_sp);
+    $row_style = sprintf('--fb-gap-pc:%dpx;--fb-gap-sp:%dpx;--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;', $gap_pc, $gap_sp, $mb_pc, $mb_sp);
   ?>
     <div class="<?php echo esc_attr($row_class); ?>" style="<?php echo esc_attr($row_style); ?>">
       <?php foreach ($items as $item) : ?>
@@ -162,8 +164,12 @@ class Flex_Banner_Shortcode_Display
     $interval  = isset($row['slider_interval'])  ? intval($row['slider_interval']) : 5;
     $arrows    = isset($row['slider_arrows'])    ? intval($row['slider_arrows']) : 1;
     $dots      = isset($row['slider_dots'])      ? intval($row['slider_dots']) : 1;
+    $mb_pc     = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
+    $mb_sp     = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
+    $row_style = sprintf('--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;', $mb_pc, $mb_sp);
   ?>
     <div class="fb-slider fb-row"
+      style="<?php echo esc_attr($row_style); ?>"
       data-animation="<?php echo esc_attr($animation); ?>"
       data-autoplay="<?php echo esc_attr($autoplay); ?>"
       data-interval="<?php echo esc_attr($interval * 1000); ?>"

@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.3', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.3');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.4', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.4');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -182,6 +182,8 @@ class Flex_Banner_Meta_Box
     $cols_sp      = isset($data['cols_sp'])          ? $data['cols_sp']          : 1;
     $gap_pc       = isset($data['gap_pc'])           ? $data['gap_pc']           : 12;
     $gap_sp       = isset($data['gap_sp'])           ? $data['gap_sp']           : 10;
+    $row_mb_pc    = isset($data['row_mb_pc'])        ? $data['row_mb_pc']        : 24;
+    $row_mb_sp    = isset($data['row_mb_sp'])        ? $data['row_mb_sp']        : 16;
     $sl_animation = isset($data['slider_animation']) ? $data['slider_animation'] : 'slide';
     $sl_autoplay  = isset($data['slider_autoplay'])  ? $data['slider_autoplay']  : 1;
     $sl_interval  = isset($data['slider_interval'])  ? $data['slider_interval']  : 5;
@@ -259,6 +261,14 @@ class Flex_Banner_Meta_Box
           <label class="fb-inline-check">
             <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_dots]" value="1" <?php checked($sl_dots, 1); ?>>
             ドットナビ
+          </label>
+        </div>
+        <div class="fb-row-common-settings">
+          <label>セクションの下余白(PC):
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][row_mb_pc]" value="<?php echo intval($row_mb_pc); ?>" style="width:55px;"> px
+          </label>
+          <label>スマホ:
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][row_mb_sp]" value="<?php echo intval($row_mb_sp); ?>" style="width:55px;"> px
           </label>
         </div>
       </div>
@@ -480,6 +490,8 @@ class Flex_Banner_Meta_Box
           'cols_sp'          => min(2, max(1, intval(isset($row['cols_sp'])       ? $row['cols_sp']       : 1))),
           'gap_pc'           => intval(isset($row['gap_pc'])                      ? $row['gap_pc']        : 12),
           'gap_sp'           => intval(isset($row['gap_sp'])                      ? $row['gap_sp']        : 10),
+          'row_mb_pc'        => intval(isset($row['row_mb_pc'])                   ? $row['row_mb_pc']     : 24),
+          'row_mb_sp'        => intval(isset($row['row_mb_sp'])                   ? $row['row_mb_sp']     : 16),
           'slider_animation' => $anim,
           'slider_autoplay'  => isset($row['slider_autoplay'])                    ? 1 : 0,
           'slider_interval'  => min(60, max(1, intval(isset($row['slider_interval']) ? $row['slider_interval'] : 5))),
