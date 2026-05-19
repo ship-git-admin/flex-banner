@@ -3,7 +3,7 @@
 /**
  * Plugin Name: フレキシブルバナーグループ
  * Description: 柔軟なバナー管理プラグイン。グリッド/スライダー表示・テキストオーバーレイ・表示スケジュール・複製機能搭載。ショートコード [flex_banner id="POST_ID"] で表示。
- * Version: 2.4.4
+ * Version: 2.4.5
  * Author: Custom
  */
 
@@ -21,7 +21,8 @@ require_once FB_PLUGIN_DIR . 'includes/class-fb-meta-box.php';
 require_once FB_PLUGIN_DIR . 'includes/class-fb-shortcode.php';
 
 // Add Custom Capabilities to Administrator Role
-function flex_banner_add_admin_caps() {
+function flex_banner_add_admin_caps()
+{
   $role = get_role('administrator');
   if ($role) {
     $caps = array(
@@ -48,7 +49,7 @@ function flex_banner_add_admin_caps() {
 register_activation_hook(__FILE__, 'flex_banner_add_admin_caps');
 
 // Upgrade Routine to Apply Caps on Updates without Reactivation
-add_action('admin_init', function() {
+add_action('admin_init', function () {
   $version = get_option('flex_banner_version', '0.0.0');
   if (version_compare($version, '2.4.0', '<')) {
     flex_banner_add_admin_caps();
