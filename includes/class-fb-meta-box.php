@@ -126,8 +126,18 @@ class Flex_Banner_Meta_Box
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_pc = intval(get_post_meta($post->ID, '_flex_banner_container_padding_pc', true));
-    $container_padding_tab = intval(get_post_meta($post->ID, '_flex_banner_container_padding_tab', true));
+    $container_padding_pc = get_post_meta($post->ID, '_flex_banner_container_padding_pc', true);
+    if ($container_padding_pc === '') {
+      $container_padding_pc = 20;
+    } else {
+      $container_padding_pc = intval($container_padding_pc);
+    }
+    $container_padding_tab = get_post_meta($post->ID, '_flex_banner_container_padding_tab', true);
+    if ($container_padding_tab === '') {
+      $container_padding_tab = 20;
+    } else {
+      $container_padding_tab = intval($container_padding_tab);
+    }
     $container_padding_sp = get_post_meta($post->ID, '_flex_banner_container_padding_sp', true);
     if ($container_padding_sp === '') {
       $container_padding_sp = 20; // 未設定時のみ20
@@ -149,14 +159,14 @@ class Flex_Banner_Meta_Box
           <th style="padding:6px 0;font-size:12px;">PC：外側の余白 (1025px〜)</th>
           <td style="padding:6px 0;">
             <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="300" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
+            <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
           </td>
         </tr>
         <tr>
           <th style="padding:6px 0;font-size:12px;">タブレット：外側の余白 (768〜1024px)</th>
           <td style="padding:6px 0;">
             <input type="number" id="fb-container-padding-tab-input" name="fb_container_padding_tab" value="<?php echo esc_attr($container_padding_tab); ?>" min="0" max="200" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 0px</p>
+            <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
           </td>
         </tr>
         <tr>

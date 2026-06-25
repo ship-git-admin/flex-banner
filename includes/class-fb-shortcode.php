@@ -41,8 +41,18 @@ class Flex_Banner_Shortcode_Display
     if ($container_width <= 0) {
       $container_width = 944;
     }
-    $container_padding_pc = intval(get_post_meta($post_id, '_flex_banner_container_padding_pc', true));
-    $container_padding_tab = intval(get_post_meta($post_id, '_flex_banner_container_padding_tab', true));
+    $container_padding_pc = get_post_meta($post_id, '_flex_banner_container_padding_pc', true);
+    if ($container_padding_pc === '') {
+      $container_padding_pc = 20;
+    } else {
+      $container_padding_pc = intval($container_padding_pc);
+    }
+    $container_padding_tab = get_post_meta($post_id, '_flex_banner_container_padding_tab', true);
+    if ($container_padding_tab === '') {
+      $container_padding_tab = 20;
+    } else {
+      $container_padding_tab = intval($container_padding_tab);
+    }
     $container_padding_sp = get_post_meta($post_id, '_flex_banner_container_padding_sp', true);
     if ($container_padding_sp === '') {
       $container_padding_sp = 20; // 未設定時のみ20

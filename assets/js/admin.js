@@ -55,8 +55,14 @@ jQuery(document).ready(function ($) {
 
     var mode = $row.data('mode') || 'grid';
     var totalWidth = getContainerWidth();
-    var paddingPC = parseInt($('#fb-container-padding-pc-input').val()) || 0;
-    var paddingSP = parseInt($('#fb-container-padding-sp-input').val()) || 0;
+    var paddingPC = parseInt($('#fb-container-padding-pc-input').val());
+    if (isNaN(paddingPC)) {
+      paddingPC = 20;
+    }
+    var paddingSP = parseInt($('#fb-container-padding-sp-input').val());
+    if (isNaN(paddingSP)) {
+      paddingSP = 20;
+    }
 
     if (mode === 'slider') {
       // スライダーモードは推奨サイズ = コンテナ内側の有効幅
