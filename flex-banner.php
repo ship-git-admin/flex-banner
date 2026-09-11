@@ -3,7 +3,7 @@
 /**
  * Plugin Name: フレキシブルバナーグループ
  * Description: 柔軟なバナー管理プラグイン。グリッド/スライダー表示・テキストオーバーレイ・表示スケジュール・複製機能搭載。ショートコード [flex_banner id="POST_ID"] で表示。
- * Version: 2.4.6
+ * Version: 2.4.7
  * Author: Custom
  */
 
@@ -61,10 +61,13 @@ add_action('admin_init', function () {
 if (file_exists(FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php')) {
   require FB_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
   $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-    'https://github.com/aurora-ship-sato/flex-banner',
+    'https://github.com/ship-git-admin/flex-banner',
     __FILE__,
     'flex-banner'
   );
-  $myUpdateChecker->setAuthentication('REDACTED_GITHUB_TOKEN');
+  // Define FLEX_BANNER_GITHUB_TOKEN in wp-config.php for private repository access.
+  if (defined('FLEX_BANNER_GITHUB_TOKEN') && FLEX_BANNER_GITHUB_TOKEN) {
+    $myUpdateChecker->setAuthentication(FLEX_BANNER_GITHUB_TOKEN);
+  }
   $myUpdateChecker->setBranch('main');
 }
