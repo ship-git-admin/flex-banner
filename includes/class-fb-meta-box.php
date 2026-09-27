@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.7', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.7');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.8', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.8');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -191,6 +191,7 @@ class Flex_Banner_Meta_Box
     $cols_pc      = isset($data['cols_pc'])          ? $data['cols_pc']          : 1;
     $cols_sp      = isset($data['cols_sp'])          ? $data['cols_sp']          : 1;
     $gap_pc       = isset($data['gap_pc'])           ? $data['gap_pc']           : 12;
+    $gap_tab      = isset($data['gap_tab'])          ? $data['gap_tab']          : $gap_pc;
     $gap_sp       = isset($data['gap_sp'])           ? $data['gap_sp']           : 10;
     $row_mb_pc    = isset($data['row_mb_pc'])        ? $data['row_mb_pc']        : 24;
     $row_mb_sp    = isset($data['row_mb_sp'])        ? $data['row_mb_sp']        : 16;
@@ -243,6 +244,9 @@ class Flex_Banner_Meta_Box
           </label>
           <label>PC余白:
             <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_pc]" value="<?php echo intval($gap_pc); ?>" class="fb-gap-pc" style="width:55px;"> px
+          </label>
+          <label>タブレット余白 (768〜1024px):
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_tab]" value="<?php echo intval($gap_tab); ?>" class="fb-gap-tab" style="width:55px;"> px
           </label>
           <label>スマホ余白:
             <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_sp]" value="<?php echo intval($gap_sp); ?>" class="fb-gap-sp" style="width:55px;"> px
@@ -499,6 +503,7 @@ class Flex_Banner_Meta_Box
           'cols_pc'          => min(4, max(1, intval(isset($row['cols_pc'])       ? $row['cols_pc']       : 1))),
           'cols_sp'          => min(2, max(1, intval(isset($row['cols_sp'])       ? $row['cols_sp']       : 1))),
           'gap_pc'           => intval(isset($row['gap_pc'])                      ? $row['gap_pc']        : 12),
+          'gap_tab'          => intval(isset($row['gap_tab'])                     ? $row['gap_tab']       : (isset($row['gap_pc']) ? $row['gap_pc'] : 12)),
           'gap_sp'           => intval(isset($row['gap_sp'])                      ? $row['gap_sp']        : 10),
           'row_mb_pc'        => intval(isset($row['row_mb_pc'])                   ? $row['row_mb_pc']     : 24),
           'row_mb_sp'        => intval(isset($row['row_mb_sp'])                   ? $row['row_mb_sp']     : 16),

@@ -56,6 +56,25 @@
   width: calc((100% - (var(--fb-gap-pc, 12px) * 3)) / 4);
 }
 
+/* タブレット用ギャップ */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .fb-row {
+    gap: var(--fb-gap-tab, var(--fb-gap-pc, 12px));
+  }
+
+  .fb-row--pc-2>.fb-column {
+    width: calc((100% - var(--fb-gap-tab, var(--fb-gap-pc, 12px))) / 2);
+  }
+
+  .fb-row--pc-3>.fb-column {
+    width: calc((100% - (var(--fb-gap-tab, var(--fb-gap-pc, 12px)) * 2)) / 3);
+  }
+
+  .fb-row--pc-4>.fb-column {
+    width: calc((100% - (var(--fb-gap-tab, var(--fb-gap-pc, 12px)) * 3)) / 4);
+  }
+}
+
 /* SP列幅 */
 @media screen and (max-width: 767px) {
   .fb-row {

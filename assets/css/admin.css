@@ -226,6 +226,16 @@
   gap: var(--fb-preview-gap, 12px);
 }
 
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .fb-items-wrapper {
+    gap: var(--fb-preview-gap-tab, var(--fb-preview-gap, 12px));
+  }
+
+  .fb-item {
+    width: calc((100% - (var(--fb-preview-gap-tab, var(--fb-preview-gap, 12px)) * (var(--fb-preview-cols, 1) - 1))) / var(--fb-preview-cols, 1));
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  バナーアイテム                                                          */
 /* ------------------------------------------------------------------ */

@@ -4,7 +4,7 @@
 
 ## 現行の基準
 
-- 現行プラグインバージョン: `2.4.7`
+- 現行プラグインバージョン: `2.4.8`
 - 更新チェッカー: Yahnis Elsts `plugin-update-checker` 公式 `v5.7`
 - 更新元: `https://github.com/ship-git-admin/flex-banner`
 - 安定ブランチ: `main`
@@ -51,4 +51,3 @@ git diff --check -- . ':(exclude)lib/plugin-update-checker'
 ```
 
 画面変更時は、WordPress管理画面でバナーの新規作成・保存・複製・削除を確認し、フロント側でグリッド、スライダー、リンク、表示期間、レスポンシブ画像を確認する。
-

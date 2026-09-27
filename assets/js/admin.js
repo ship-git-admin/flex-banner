@@ -75,8 +75,10 @@ jQuery(document).ready(function ($) {
     var cols = parseInt($row.find('.fb-cols-pc').val()) || 1;
     var colsSP = parseInt($row.find('.fb-cols-sp').val()) || 1;
     var gapPC = parseInt($row.find('.fb-gap-pc').val());
+    var gapTab = parseInt($row.find('.fb-gap-tab').val());
     var gapSP = parseInt($row.find('.fb-gap-sp').val());
     if (isNaN(gapPC)) gapPC = 12;
+    if (isNaN(gapTab)) gapTab = gapPC;
     if (isNaN(gapSP)) gapSP = 10;
 
     // PC推奨サイズ
@@ -99,6 +101,7 @@ jQuery(document).ready(function ($) {
     // 管理画面プレビュー用のCSS変数
     $row.css('--fb-preview-cols', cols);
     $row.css('--fb-preview-gap', gapPC + 'px');
+    $row.css('--fb-preview-gap-tab', gapTab + 'px');
   }
 
   /* ================================================================== */
@@ -146,7 +149,7 @@ jQuery(document).ready(function ($) {
   /* ================================================================== */
   /*  グリッド設定変更時に推奨サイズ更新                                        */
   /* ================================================================== */
-  $container.on('change input', '.fb-cols-pc, .fb-cols-sp, .fb-gap-pc, .fb-gap-sp', function () {
+  $container.on('change input', '.fb-cols-pc, .fb-cols-sp, .fb-gap-pc, .fb-gap-tab, .fb-gap-sp', function () {
     updatePreviewStyles($(this).closest('.fb-row'));
   });
 

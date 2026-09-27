@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.7');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.7', true);
+    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.8');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.8', true);
   }
 
   public function render_shortcode($atts)
@@ -146,12 +146,13 @@ class Flex_Banner_Shortcode_Display
     $cols_pc = isset($row['cols_pc']) ? intval($row['cols_pc']) : 1;
     $cols_sp = isset($row['cols_sp']) ? intval($row['cols_sp']) : 1;
     $gap_pc  = isset($row['gap_pc'])  ? intval($row['gap_pc'])  : 12;
+    $gap_tab = isset($row['gap_tab']) ? intval($row['gap_tab']) : $gap_pc;
     $gap_sp  = isset($row['gap_sp'])  ? intval($row['gap_sp'])  : 10;
     $mb_pc   = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
     $mb_sp   = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
 
     $row_class = sprintf('fb-row fb-row--pc-%d fb-row--sp-%d', $cols_pc, $cols_sp);
-    $row_style = sprintf('--fb-gap-pc:%dpx;--fb-gap-sp:%dpx;--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;', $gap_pc, $gap_sp, $mb_pc, $mb_sp);
+    $row_style = sprintf('--fb-gap-pc:%dpx;--fb-gap-tab:%dpx;--fb-gap-sp:%dpx;--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;', $gap_pc, $gap_tab, $gap_sp, $mb_pc, $mb_sp);
   ?>
     <div class="<?php echo esc_attr($row_class); ?>" style="<?php echo esc_attr($row_style); ?>">
       <?php foreach ($items as $item) : ?>
