@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.8', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.8');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.9', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.9');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -313,6 +313,7 @@ class Flex_Banner_Meta_Box
   {
     $img_pc           = isset($data['img_pc'])           ? $data['img_pc']           : '';
     $img_sp           = isset($data['img_sp'])           ? $data['img_sp']           : '';
+    $alt_text         = array_key_exists('alt_text', $data) ? $data['alt_text'] : ($img_pc ? get_post_meta(intval($img_pc), '_wp_attachment_image_alt', true) : '');
     $url              = isset($data['url'])              ? $data['url']              : '';
     $target_blank     = isset($data['target_blank'])     ? $data['target_blank']     : 0;
     $schedule_start   = isset($data['schedule_start'])   ? $data['schedule_start']   : '';
@@ -374,6 +375,12 @@ class Flex_Banner_Meta_Box
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="fb-field-group">
+          <label><span class="dashicons dashicons-universal-access"></span> ALT（PC/SP共通）</label>
+          <input type="text" name="fb_data[<?php echo $n; ?>][items][<?php echo $i; ?>][alt_text]" value="<?php echo esc_attr($alt_text); ?>" class="widefat fb-alt-text" placeholder="画像の内容を簡潔に説明">
+          <p class="description">PC用・SP用画像に共通の代替テキストです。未入力の場合はPC用画像のメディアALTを使用します。</p>
         </div>
 
         <div class="fb-field-group">
@@ -531,6 +538,12 @@ class Flex_Banner_Meta_Box
               'caption_btn_text' => sanitize_text_field(isset($item['caption_btn_text']) ? $item['caption_btn_text'] : ''),
               'caption_btn_url'  => isset($item['caption_btn_url'])         ? esc_url_raw(trim($item['caption_btn_url'])) : '',
             );
+            $alt_text = isset($item['alt_text']) && is_scalar($item['alt_text'])
+              ? sanitize_text_field(wp_unslash((string) $item['alt_text']))
+              : '';
+            if ('' !== $alt_text) {
+              $clean_item['alt_text'] = $alt_text;
+            }
             if ($clean_item['img_pc'] || $clean_item['img_sp']) {
               $clean_row['items'][$item_key] = $clean_item;
             }

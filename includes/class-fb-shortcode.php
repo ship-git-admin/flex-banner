@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.8');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.8', true);
+    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.9');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.9', true);
   }
 
   public function render_shortcode($atts)
@@ -243,7 +243,9 @@ class Flex_Banner_Shortcode_Display
     $pc_h   = $img_pc_data[2];
     $sp_url = $img_sp_data ? $img_sp_data[0] : $pc_url;
 
-    $alt = get_post_meta($img_pc_id, '_wp_attachment_image_alt', true);
+    $alt = array_key_exists('alt_text', $item)
+      ? $item['alt_text']
+      : get_post_meta($img_pc_id, '_wp_attachment_image_alt', true);
 
     $has_caption = $caption_heading || $caption_body || $caption_btn_text;
     // キャプションボタンがある場合は外側のaタグは使わない（入れ子回避）
