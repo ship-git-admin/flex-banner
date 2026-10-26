@@ -14,8 +14,32 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_enqueue_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.9');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.9', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.10');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.10', true);
+    if (function_exists('wp_script_add_data')) {
+      wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
+    }
+
+    if ($this->current_request_has_banner_shortcode()) {
+      wp_enqueue_style('fb-frontend-style');
+    }
+  }
+
+  private function current_request_has_banner_shortcode()
+  {
+    global $wp_query;
+
+    if (! isset($wp_query->posts) || ! is_array($wp_query->posts)) {
+      return false;
+    }
+
+    foreach ($wp_query->posts as $queried_post) {
+      if ($queried_post instanceof WP_Post && has_shortcode($queried_post->post_content, 'flex_banner')) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public function render_shortcode($atts)
@@ -34,6 +58,11 @@ class Flex_Banner_Shortcode_Display
     $data = get_post_meta($post_id, '_flex_banner_data', true);
     if (! is_array($data) || empty($data)) {
       return '';
+    }
+
+    // 投稿本文で検出できないページビルダー等からの呼び出しにも対応
+    if (! wp_style_is('fb-frontend-style', 'enqueued')) {
+      wp_enqueue_style('fb-frontend-style');
     }
 
     // コンテナ設定

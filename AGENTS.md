@@ -4,7 +4,7 @@
 
 ## 現行の基準
 
-- 現行プラグインバージョン: `2.4.9`
+- 現行プラグインバージョン: `2.4.10`
 - 更新チェッカー: Yahnis Elsts `plugin-update-checker` 公式 `v5.7`
 - 更新元: `https://github.com/ship-git-admin/flex-banner`
 - 安定ブランチ: `main`
