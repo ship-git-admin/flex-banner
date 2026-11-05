@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.14');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.14', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.15');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.15', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -88,6 +88,9 @@ class Flex_Banner_Shortcode_Display
     } else {
       $container_padding_sp = intval($container_padding_sp);
     }
+    $container_spacing_pc = min(300, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_pc', true))));
+    $container_spacing_tab = min(200, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_tab', true))));
+    $container_spacing_sp = min(150, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_sp', true))));
 
     // スライダーが含まれる場合はJSをエンキュー
     $has_slider = false;
@@ -109,13 +112,18 @@ class Flex_Banner_Shortcode_Display
       /* PC (1025px ~) */
       #<?php echo esc_attr($container_id); ?> {
         max-width: <?php echo intval($container_width); ?>px;
+        padding-top: <?php echo intval($container_spacing_pc); ?>px;
+        padding-bottom: <?php echo intval($container_spacing_pc); ?>px;
         padding-left: <?php echo intval($container_padding_pc); ?>px;
         padding-right: <?php echo intval($container_padding_pc); ?>px;
+        --fb-container-padding-sp: <?php echo intval($container_padding_sp); ?>px;
       }
 
       /* Tablet (768px ~ 1024px) */
       @media screen and (max-width: 1024px) {
         #<?php echo esc_attr($container_id); ?> {
+          padding-top: <?php echo intval($container_spacing_tab); ?>px;
+          padding-bottom: <?php echo intval($container_spacing_tab); ?>px;
           padding-left: <?php echo intval($container_padding_tab); ?>px;
           padding-right: <?php echo intval($container_padding_tab); ?>px;
         }
@@ -124,12 +132,14 @@ class Flex_Banner_Shortcode_Display
       /* Smartphone (~ 767px) */
       @media screen and (max-width: 767px) {
         #<?php echo esc_attr($container_id); ?> {
+          padding-top: <?php echo intval($container_spacing_sp); ?>px;
+          padding-bottom: <?php echo intval($container_spacing_sp); ?>px;
           padding-left: <?php echo intval($container_padding_sp); ?>px;
           padding-right: <?php echo intval($container_padding_sp); ?>px;
         }
       }
     </style>
-    <div class="fb-container" id="<?php echo esc_attr($container_id); ?>">
+    <div class="<?php echo esc_attr('fb-container' . ($container_padding_sp > 0 ? ' fb-container--sp-padding' : '')); ?>" id="<?php echo esc_attr($container_id); ?>">
       <?php foreach ($data as $row_index => $row) : ?>
         <?php
         $mode    = isset($row['mode']) ? $row['mode'] : 'grid';
@@ -243,6 +253,7 @@ class Flex_Banner_Shortcode_Display
     <div class="fb-slider fb-row"
       style="<?php echo esc_attr($row_style); ?>"
       data-animation="<?php echo esc_attr($animation); ?>"
+      data-slide-count="<?php echo esc_attr(count($items)); ?>"
       data-slides-to-show-pc="<?php echo esc_attr($slides_to_show_pc); ?>"
       data-slides-to-show-tab="<?php echo esc_attr($slides_to_show_tab); ?>"
       data-slides-to-show-sp="<?php echo esc_attr($slides_to_show_sp); ?>"

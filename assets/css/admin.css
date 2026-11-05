@@ -223,6 +223,10 @@
   white-space: nowrap;
 }
 
+.fb-size-guide-row {
+  margin-top: 8px;
+}
+
 .fb-hidden {
   display: none !important;
 }

@@ -64,22 +64,24 @@ jQuery(document).ready(function ($) {
       paddingSP = 20;
     }
 
-    if (mode === 'slider') {
-      // スライダーモードは推奨サイズ = コンテナ内側の有効幅
-      var effectiveCW = totalWidth - (paddingPC * 2);
-      $row.find('.fb-guide-pc').html('PC: 100% (推奨: <strong>' + effectiveCW + 'px</strong>)');
-      $row.find('.fb-guide-sp').html('スマホ: <strong>100%</strong>');
-      return;
-    }
-
-    var cols = parseInt($row.find('.fb-cols-pc').val()) || 1;
-    var colsSP = parseInt($row.find('.fb-cols-sp').val()) || 1;
     var gapPC = parseInt($row.find('.fb-gap-pc').val());
     var gapTab = parseInt($row.find('.fb-gap-tab').val());
     var gapSP = parseInt($row.find('.fb-gap-sp').val());
     if (isNaN(gapPC)) gapPC = 12;
     if (isNaN(gapTab)) gapTab = gapPC;
     if (isNaN(gapSP)) gapSP = 10;
+
+    var cols = mode === 'slider'
+      ? (parseInt($row.find('input[name$="[slider_slides_to_show_pc]"]').val()) || 1)
+      : (parseInt($row.find('.fb-cols-pc').val()) || 1);
+    var colsSP = mode === 'slider'
+      ? (parseInt($row.find('input[name$="[slider_slides_to_show_sp]"]').val()) || 1)
+      : (parseInt($row.find('.fb-cols-sp').val()) || 1);
+
+    if (mode === 'slider' && $row.find('select[name$="[slider_animation]"]').val() === 'fade') {
+      cols = 1;
+      colsSP = 1;
+    }
 
     // PC推奨サイズ
     var effectiveWidthPC = totalWidth - (paddingPC * 2);
@@ -88,14 +90,17 @@ jQuery(document).ready(function ($) {
     if (cols === 1) {
       pcText = '100% (推奨: <strong>' + Math.floor(effectiveWidthPC) + 'px</strong>)';
     } else {
-      pcText = Math.floor(100 / cols) + '% (推奨幅: <strong>' + Math.floor(itemWidthPC) + 'px</strong>)';
+      pcText = '約' + Math.floor(100 / cols) + '% (推奨幅: <strong>' + Math.floor(itemWidthPC) + 'px</strong>)';
     }
     $row.find('.fb-guide-pc').html('PC: ' + pcText);
 
     // SP推奨サイズ
     var effectiveWidthSP = 375 - (paddingSP * 2); // 標準的なモバイル幅375pxを基準に算出
     var itemWidthSP = (effectiveWidthSP - (gapSP * (colsSP - 1))) / colsSP;
-    var spText = (colsSP === 1) ? '100%' : '50%';
+    if (mode === 'slider' && colsSP === 1 && paddingSP > 0 && $row.find('select[name$="[slider_animation]"]').val() === 'slide') {
+      itemWidthSP -= Math.max(0, gapSP + 12 - paddingSP);
+    }
+    var spText = (colsSP === 1) ? '100%' : '約' + Math.floor(100 / colsSP) + '%';
     $row.find('.fb-guide-sp').html('スマホ: ' + spText + ' (推奨幅: <strong>' + Math.floor(itemWidthSP) + 'px</strong>)');
 
     // 管理画面プレビュー用のCSS変数
@@ -149,7 +154,7 @@ jQuery(document).ready(function ($) {
   /* ================================================================== */
   /*  グリッド設定変更時に推奨サイズ更新                                        */
   /* ================================================================== */
-  $container.on('change input', '.fb-cols-pc, .fb-cols-sp, .fb-gap-pc, .fb-gap-tab, .fb-gap-sp', function () {
+  $container.on('change input', '.fb-cols-pc, .fb-cols-sp, .fb-gap-pc, .fb-gap-tab, .fb-gap-sp, .fb-slider-settings input[name$="[slider_slides_to_show_pc]"], .fb-slider-settings input[name$="[slider_slides_to_show_sp]"], .fb-slider-settings select[name$="[slider_animation]"]', function () {
     updatePreviewStyles($(this).closest('.fb-row'));
   });
 
