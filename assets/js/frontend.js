@@ -70,8 +70,8 @@
       function makeClone(slide) {
         var clone = slide.cloneNode(true);
         clone.classList.add('fb-slide--clone');
+        // Keep loop clones out of keyboard and assistive-technology navigation while allowing pointer clicks.
         clone.setAttribute('aria-hidden', 'true');
-        clone.setAttribute('inert', '');
         clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(function (element) {
           element.setAttribute('tabindex', '-1');
         });
