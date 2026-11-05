@@ -31,6 +31,10 @@
     var timer = null;
     var slidesToShow = 0;
     var maxIndex = -1;
+    var infiniteLoopActive = false;
+    var loopHeadClone = null;
+    var loopTailClones = [];
+    var loopResetPending = false;
     var dots = [];
 
     function configuredSlidesToShow() {
@@ -47,6 +51,38 @@
 
       if (animation === 'fade') configured = 1;
       return Math.min(total, Math.max(1, configured));
+    }
+
+    function prepareLoopClones() {
+      if (!loop || animation !== 'slide') return;
+
+      var cloneCount = 0;
+      [slidesToShowPC, slidesToShowTab, slidesToShowSP].forEach(function (configured) {
+        var count = Math.min(total, Math.max(1, configured));
+        if (count < total) cloneCount = Math.max(cloneCount, count);
+      });
+
+      if (!cloneCount) return;
+
+      function makeClone(slide) {
+        var clone = slide.cloneNode(true);
+        clone.classList.add('fb-slide--clone');
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('inert', '');
+        clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(function (element) {
+          element.setAttribute('tabindex', '-1');
+        });
+        return clone;
+      }
+
+      loopHeadClone = makeClone(slides[total - 1]);
+      track.insertBefore(loopHeadClone, slides[0]);
+
+      for (var i = 0; i < cloneCount; i++) {
+        var clone = makeClone(slides[i % total]);
+        track.appendChild(clone);
+        loopTailClones.push(clone);
+      }
     }
 
     function updateDots() {
@@ -91,31 +127,68 @@
       }
     }
 
-    function updateTrackPosition() {
-      var offset = slides[current].offsetLeft - slides[0].offsetLeft;
+    function updateTrackPosition(slideIndex) {
+      var targetIndex = typeof slideIndex === 'number' ? slideIndex : current;
+      var targetSlide = slides[targetIndex];
+      if (targetIndex === -1) targetSlide = loopHeadClone;
+      if (targetIndex === total) targetSlide = loopTailClones[0];
+      if (!targetSlide) return;
+
+      var firstTrackSlide = loopHeadClone || slides[0];
+      var offset = targetSlide.offsetLeft - firstTrackSlide.offsetLeft;
       track.style.transform = offset ? 'translateX(-' + offset + 'px)' : 'translateX(0px)';
     }
 
     function goTo(idx) {
-      if (loop) {
-        if (idx < 0) idx = maxIndex;
-        if (idx > maxIndex) idx = 0;
-      } else {
-        idx = Math.max(0, Math.min(maxIndex, idx));
-      }
+      if (loopResetPending) return;
 
-      if (animation === 'fade') {
-        slides[current].classList.remove('is-active');
-        slides[idx].classList.add('is-active');
+      if (infiniteLoopActive && animation === 'slide' && idx < 0) {
+        current = total - 1;
+        loopResetPending = true;
+        updateTrackPosition(-1);
+      } else if (infiniteLoopActive && animation === 'slide' && idx >= total) {
+        current = 0;
+        loopResetPending = true;
+        updateTrackPosition(total);
+      } else {
+        if (loop) {
+          if (idx < 0) idx = maxIndex;
+          if (idx > maxIndex) idx = 0;
+        } else {
+          idx = Math.max(0, Math.min(maxIndex, idx));
+        }
+
+        if (animation === 'fade') {
+          slides[current].classList.remove('is-active');
+          slides[idx].classList.add('is-active');
+        }
+        current = idx;
+        if (animation !== 'fade') updateTrackPosition();
       }
-      current = idx;
-      if (animation !== 'fade') updateTrackPosition();
       updateDots();
       updateControls();
       if (!loop && current >= maxIndex) stopTimer();
     }
 
+    function resetLoopPosition() {
+      if (!loopResetPending) return;
+
+      loopResetPending = false;
+      var previousTransition = track.style.transition;
+      track.style.transition = 'none';
+      updateTrackPosition();
+      void track.offsetHeight;
+      track.style.transition = previousTransition;
+    }
+
+    function finishLoopTransition(event) {
+      if (!loopResetPending || event.target !== track) return;
+      if (event.propertyName && event.propertyName !== 'transform') return;
+      resetLoopPosition();
+    }
+
     function next() {
+      if (loopResetPending) return;
       if (!loop && current >= maxIndex) {
         stopTimer();
         return;
@@ -124,6 +197,7 @@
     }
 
     function prev() {
+      if (loopResetPending) return;
       if (!loop && current <= 0) return;
       goTo(current - 1);
     }
@@ -184,12 +258,14 @@
 
     function updateResponsiveSettings() {
       var nextSlidesToShow = configuredSlidesToShow();
-      var nextMaxIndex = total - nextSlidesToShow;
       var slideCountChanged = nextSlidesToShow !== slidesToShow;
 
       slidesToShow = nextSlidesToShow;
-      maxIndex = nextMaxIndex;
-      current = Math.min(current, maxIndex);
+      infiniteLoopActive = loop && animation === 'slide' && total > slidesToShow && loopTailClones.length > 0;
+      maxIndex = infiniteLoopActive ? total - 1 : total - slidesToShow;
+      current = infiniteLoopActive ? Math.min(current, total - 1) : Math.min(current, maxIndex);
+
+      resetLoopPosition();
 
       if (animation === 'fade') {
         slides.forEach(function (slide, i) {
@@ -209,6 +285,8 @@
       }
     }
 
+    prepareLoopClones();
+    track.addEventListener('transitionend', finishLoopTransition);
     window.addEventListener('resize', updateResponsiveSettings);
     updateResponsiveSettings();
   }

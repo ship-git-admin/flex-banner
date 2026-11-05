@@ -357,8 +357,8 @@
 
 .fb-slider-prev svg,
 .fb-slider-next svg {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   stroke: var(--fb-slider-arrow-color, #78aa9b);
   display: block;
 }
