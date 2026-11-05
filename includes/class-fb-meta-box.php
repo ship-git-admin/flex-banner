@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.21', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.21');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.22', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.22');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -216,7 +216,7 @@ class Flex_Banner_Meta_Box
             <span>下余白</span>
             <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_bottom_sp" value="<?php echo esc_attr($container_spacing_bottom_sp); ?>" min="0" max="150"> px</span>
           </label>
-          <p class="description">左右余白の初期値: 20px。スライダー1枚表示時は次画像のチラ見せにも使います。</p>
+          <p class="description">左右余白の初期値: 20px。スライド切替のスライダーでは、表示期間内のバナー数がSPの同時表示枚数を上回る場合、表示中のバナーを中央に配置し、前後のバナーの端を左右両側に表示します。</p>
         </section>
       </div>
     </div>
