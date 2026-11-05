@@ -286,6 +286,7 @@
 
   .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] {
     width: calc(100% + var(--fb-container-padding-sp, 0px));
+    margin-left: var(--fb-slider-sp-peek-offset, 0px);
   }
 
   .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-track--slide .fb-slide {
