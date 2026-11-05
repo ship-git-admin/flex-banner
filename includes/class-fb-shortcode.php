@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.10');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.10', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.11');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.11', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -200,17 +200,23 @@ class Flex_Banner_Shortcode_Display
   private function render_slider_row($row, $items)
   {
     $animation = isset($row['slider_animation']) ? $row['slider_animation'] : 'slide';
+    $slides_to_show = isset($row['slider_slides_to_show']) ? min(count($items), min(20, max(1, intval($row['slider_slides_to_show'])))) : 1;
+    if ($animation === 'fade') {
+      $slides_to_show = 1;
+    }
     $autoplay  = isset($row['slider_autoplay'])  ? intval($row['slider_autoplay']) : 1;
     $interval  = isset($row['slider_interval'])  ? intval($row['slider_interval']) : 5;
     $arrows    = isset($row['slider_arrows'])    ? intval($row['slider_arrows']) : 1;
     $dots      = isset($row['slider_dots'])      ? intval($row['slider_dots']) : 1;
     $mb_pc     = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
     $mb_sp     = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
-    $row_style = sprintf('--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;', $mb_pc, $mb_sp);
+    $slide_width = 100 / $slides_to_show;
+    $row_style = sprintf('--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;--fb-slider-slide-width:%.6F%%;', $mb_pc, $mb_sp, $slide_width);
   ?>
     <div class="fb-slider fb-row"
       style="<?php echo esc_attr($row_style); ?>"
       data-animation="<?php echo esc_attr($animation); ?>"
+      data-slides-to-show="<?php echo esc_attr($slides_to_show); ?>"
       data-autoplay="<?php echo esc_attr($autoplay); ?>"
       data-interval="<?php echo esc_attr($interval * 1000); ?>"
       data-arrows="<?php echo esc_attr($arrows); ?>"

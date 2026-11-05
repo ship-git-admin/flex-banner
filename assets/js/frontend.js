@@ -14,6 +14,11 @@
     if (!total) return;
 
     var animation = el.dataset.animation || 'slide';
+    var requestedSlidesToShow = parseInt(el.dataset.slidesToShow, 10) || 1;
+    var slidesToShow = Math.min(total, Math.max(1, requestedSlidesToShow));
+    if (animation === 'fade') slidesToShow = 1;
+    el.style.setProperty('--fb-slider-slide-width', (100 / slidesToShow) + '%');
+    var maxIndex = total - slidesToShow;
     var autoplay = el.dataset.autoplay === '1';
     var interval = parseInt(el.dataset.interval, 10) || 5000;
     var showArrows = el.dataset.arrows === '1';
@@ -26,8 +31,8 @@
     var timer = null;
     var dots = [];
 
-    // スライドが1枚以下の場合はナビを非表示
-    if (total <= 1) {
+    // 表示枚数に対して移動できる位置がない場合はナビを非表示
+    if (maxIndex <= 0) {
       if (prevBtn) prevBtn.style.display = 'none';
       if (nextBtn) nextBtn.style.display = 'none';
       if (dotsEl) dotsEl.style.display = 'none';
@@ -37,11 +42,11 @@
 
     // ドット生成
     if (showDots && dotsEl) {
-      for (var d = 0; d < total; d++) {
+      for (var d = 0; d <= maxIndex; d++) {
         var dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'fb-slider-dot';
-        dot.setAttribute('aria-label', (d + 1) + '枚目');
+        dot.setAttribute('aria-label', (d + 1) + '枚目から表示');
         dotsEl.appendChild(dot);
         dots.push(dot);
       }
@@ -61,14 +66,15 @@
     }
 
     function goTo(idx) {
-      if (idx < 0) idx = total - 1;
-      if (idx >= total) idx = 0;
+      if (idx < 0) idx = maxIndex;
+      if (idx > maxIndex) idx = 0;
 
       if (animation === 'fade') {
         slides[current].classList.remove('is-active');
         slides[idx].classList.add('is-active');
       } else {
-        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        var offset = idx * (100 / slidesToShow);
+        track.style.transform = offset ? 'translateX(-' + offset + '%)' : 'translateX(0%)';
       }
       current = idx;
       updateDots();

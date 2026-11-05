@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.10', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.10');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.11', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.11');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -196,6 +196,7 @@ class Flex_Banner_Meta_Box
     $row_mb_pc    = isset($data['row_mb_pc'])        ? $data['row_mb_pc']        : 24;
     $row_mb_sp    = isset($data['row_mb_sp'])        ? $data['row_mb_sp']        : 16;
     $sl_animation = isset($data['slider_animation']) ? $data['slider_animation'] : 'slide';
+    $sl_slides_to_show = isset($data['slider_slides_to_show']) ? min(20, max(1, intval($data['slider_slides_to_show']))) : 1;
     $sl_autoplay  = isset($data['slider_autoplay'])  ? $data['slider_autoplay']  : 1;
     $sl_interval  = isset($data['slider_interval'])  ? $data['slider_interval']  : 5;
     $sl_arrows    = isset($data['slider_arrows'])    ? $data['slider_arrows']    : 1;
@@ -261,6 +262,10 @@ class Flex_Banner_Meta_Box
               <option value="fade" <?php selected($sl_animation, 'fade');  ?>>フェード</option>
             </select>
           </label>
+          <label>同時表示枚数（全デバイス共通）:
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][slider_slides_to_show]" value="<?php echo esc_attr($sl_slides_to_show); ?>" min="1" max="20" class="fb-slider-slides-to-show" style="width:60px;"> 枚
+          </label>
+          <p class="description" style="flex-basis:100%;margin:0;">表示枚数よりバナー数が少ない場合は、バナー数に合わせて表示します。フェードは1枚表示です。</p>
           <label class="fb-inline-check">
             <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_autoplay]" value="1" <?php checked($sl_autoplay, 1); ?>>
             自動再生
@@ -515,6 +520,7 @@ class Flex_Banner_Meta_Box
           'row_mb_pc'        => intval(isset($row['row_mb_pc'])                   ? $row['row_mb_pc']     : 24),
           'row_mb_sp'        => intval(isset($row['row_mb_sp'])                   ? $row['row_mb_sp']     : 16),
           'slider_animation' => $anim,
+          'slider_slides_to_show' => min(20, max(1, intval(isset($row['slider_slides_to_show']) ? $row['slider_slides_to_show'] : 1))),
           'slider_autoplay'  => isset($row['slider_autoplay'])                    ? 1 : 0,
           'slider_interval'  => min(60, max(1, intval(isset($row['slider_interval']) ? $row['slider_interval'] : 5))),
           'slider_arrows'    => isset($row['slider_arrows'])                      ? 1 : 0,
