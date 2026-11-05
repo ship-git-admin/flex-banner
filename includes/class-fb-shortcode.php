@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.16');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.16', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.17');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.17', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -177,7 +177,7 @@ class Flex_Banner_Shortcode_Display
         }
 
         if ($mode === 'slider') {
-          $this->render_slider_row($row, $visible_items);
+          $this->render_slider_row($row, $visible_items, $container_padding_sp);
         } else {
           $this->render_grid_row($row, $visible_items);
         }
@@ -219,7 +219,7 @@ class Flex_Banner_Shortcode_Display
   /*  スライダー表示                                                        */
   /* ------------------------------------------------------------------ */
 
-  private function render_slider_row($row, $items)
+  private function render_slider_row($row, $items, $container_padding_sp)
   {
     $animation = isset($row['slider_animation']) ? $row['slider_animation'] : 'slide';
     $legacy_slides_to_show = isset($row['slider_slides_to_show']) ? min(20, max(1, intval($row['slider_slides_to_show']))) : 1;
@@ -238,6 +238,12 @@ class Flex_Banner_Shortcode_Display
     $gap_pc = max(0, intval(isset($row['gap_pc']) ? $row['gap_pc'] : 12));
     $gap_tab = max(0, intval(isset($row['gap_tab']) ? $row['gap_tab'] : (isset($row['gap_pc']) ? $row['gap_pc'] : 12)));
     $gap_sp = max(0, intval(isset($row['gap_sp']) ? $row['gap_sp'] : 10));
+    $container_padding_sp = max(0, intval($container_padding_sp));
+    $sp_peek_shrink = max($container_padding_sp, $gap_sp + 12);
+    $sp_peek_shrink_per_slide = $sp_peek_shrink / max(1, $slides_to_show_sp);
+    $sp_peek_enabled = $animation === 'slide'
+      && $container_padding_sp > 0
+      && $slides_to_show_sp < count($items);
     $mb_pc     = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
     $mb_sp     = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
     $arrow_color = isset($row['slider_arrow_color']) && is_string($row['slider_arrow_color']) ? sanitize_hex_color($row['slider_arrow_color']) : '';
@@ -260,9 +266,14 @@ class Flex_Banner_Shortcode_Display
       $dot_color,
       $dot_active_color
     );
+    $row_style .= sprintf('--fb-slider-sp-peek-shrink-per-slide:%.6Fpx;', $sp_peek_shrink_per_slide);
     $loop = isset($row['slider_loop']) ? intval($row['slider_loop']) : 1;
+    $slider_class = 'fb-slider fb-row';
+    if ($sp_peek_enabled) {
+      $slider_class .= ' fb-slider--sp-peek';
+    }
   ?>
-    <div class="fb-slider fb-row"
+    <div class="<?php echo esc_attr($slider_class); ?>"
       style="<?php echo esc_attr($row_style); ?>"
       data-animation="<?php echo esc_attr($animation); ?>"
       data-slide-count="<?php echo esc_attr(count($items)); ?>"

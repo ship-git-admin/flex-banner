@@ -284,12 +284,12 @@
     flex-basis: var(--fb-slider-slide-width-sp, 100%);
   }
 
-  .fb-container--sp-padding .fb-slider[data-animation="slide"][data-slides-to-show-sp="1"]:not([data-slide-count="1"]) {
+  .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] {
     width: calc(100% + var(--fb-container-padding-sp, 0px));
   }
 
-  .fb-container--sp-padding .fb-slider[data-animation="slide"][data-slides-to-show-sp="1"]:not([data-slide-count="1"]) .fb-slider-track--slide .fb-slide {
-    flex-basis: calc(var(--fb-slider-slide-width-sp, 100%) - max(var(--fb-container-padding-sp, 0px), calc(var(--fb-gap-sp, 0px) + 12px)));
+  .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-track--slide .fb-slide {
+    flex-basis: calc(var(--fb-slider-slide-width-sp, 100%) - var(--fb-slider-sp-peek-shrink-per-slide, 0px));
   }
 }
 
