@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.18');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.18', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.19');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.19', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -136,8 +136,8 @@ class Flex_Banner_Shortcode_Display
         #<?php echo esc_attr($container_id); ?> {
           padding-top: <?php echo intval($container_spacing_top_tab); ?>px;
           padding-bottom: <?php echo intval($container_spacing_bottom_tab); ?>px;
-          padding-left: <?php echo intval($container_padding_tab); ?>px;
-          padding-right: <?php echo intval($container_padding_tab); ?>px;
+          padding-left: <?php echo intval($container_padding_tab); ?>px !important;
+          padding-right: <?php echo intval($container_padding_tab); ?>px !important;
         }
       }
 
@@ -146,8 +146,8 @@ class Flex_Banner_Shortcode_Display
         #<?php echo esc_attr($container_id); ?> {
           padding-top: <?php echo intval($container_spacing_top_sp); ?>px;
           padding-bottom: <?php echo intval($container_spacing_bottom_sp); ?>px;
-          padding-left: <?php echo intval($container_padding_sp); ?>px;
-          padding-right: <?php echo intval($container_padding_sp); ?>px;
+          padding-left: <?php echo intval($container_padding_sp); ?>px !important;
+          padding-right: <?php echo intval($container_padding_sp); ?>px !important;
         }
       }
     </style>
@@ -267,7 +267,6 @@ class Flex_Banner_Shortcode_Display
       $dot_active_color
     );
     $row_style .= sprintf('--fb-slider-sp-peek-shrink-per-slide:%.6Fpx;', $sp_peek_shrink_per_slide);
-    $row_style .= sprintf('--fb-slider-sp-peek-offset:%.6Fpx;', -($container_padding_sp / 2));
     $loop = isset($row['slider_loop']) ? intval($row['slider_loop']) : 1;
     $slider_class = 'fb-slider fb-row';
     if ($sp_peek_enabled) {
@@ -286,12 +285,14 @@ class Flex_Banner_Shortcode_Display
       data-interval="<?php echo esc_attr($interval * 1000); ?>"
       data-arrows="<?php echo esc_attr($arrows); ?>"
       data-dots="<?php echo esc_attr($dots); ?>">
-      <div class="fb-slider-track fb-slider-track--<?php echo esc_attr($animation); ?>">
-        <?php foreach ($items as $item) : ?>
-          <div class="fb-slide">
-            <?php $this->render_item_inner($item); ?>
-          </div>
-        <?php endforeach; ?>
+      <div class="fb-slider-viewport">
+        <div class="fb-slider-track fb-slider-track--<?php echo esc_attr($animation); ?>">
+          <?php foreach ($items as $item) : ?>
+            <div class="fb-slide">
+              <?php $this->render_item_inner($item); ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
       </div>
       <?php if ($arrows || $dots) : ?>
         <div class="fb-slider-nav" role="group" aria-label="スライダーナビゲーション">

@@ -247,6 +247,13 @@
   width: 100%;
 }
 
+/* トラックの表示窓。スライダー本体と分けて、表示幅だけを拡張できるようにする */
+.fb-slider-viewport {
+  flex: 0 0 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 /* トラック共通 */
 .fb-slider-track {
   display: flex;
@@ -285,8 +292,11 @@
   }
 
   .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] {
-    width: calc(100% + var(--fb-container-padding-sp, 0px));
-    margin-left: var(--fb-slider-sp-peek-offset, 0px);
+    overflow: visible;
+  }
+
+  .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-viewport {
+    flex-basis: calc(100% + var(--fb-container-padding-sp, 0px));
   }
 
   .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-track--slide .fb-slide {
