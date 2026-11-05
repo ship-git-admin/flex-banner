@@ -259,9 +259,21 @@
 }
 
 .fb-slider-track--slide .fb-slide {
-  flex: 0 0 var(--fb-slider-slide-width, 100%);
+  flex: 0 0 var(--fb-slider-slide-width-pc, 100%);
   min-width: 0;
   box-sizing: border-box;
+}
+
+@media screen and (max-width: 1024px) {
+  .fb-slider-track--slide .fb-slide {
+    flex-basis: var(--fb-slider-slide-width-tab, 100%);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .fb-slider-track--slide .fb-slide {
+    flex-basis: var(--fb-slider-slide-width-sp, 100%);
+  }
 }
 
 /* フェードアニメーション */
@@ -317,6 +329,12 @@
 .fb-slider-prev:hover,
 .fb-slider-next:hover {
   background: rgba(0, 0, 0, .68);
+}
+
+.fb-slider-prev:disabled,
+.fb-slider-next:disabled {
+  opacity: .35;
+  cursor: default;
 }
 
 .fb-slider-prev {

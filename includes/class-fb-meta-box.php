@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.11', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.11');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.12', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.12');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -196,7 +196,11 @@ class Flex_Banner_Meta_Box
     $row_mb_pc    = isset($data['row_mb_pc'])        ? $data['row_mb_pc']        : 24;
     $row_mb_sp    = isset($data['row_mb_sp'])        ? $data['row_mb_sp']        : 16;
     $sl_animation = isset($data['slider_animation']) ? $data['slider_animation'] : 'slide';
-    $sl_slides_to_show = isset($data['slider_slides_to_show']) ? min(20, max(1, intval($data['slider_slides_to_show']))) : 1;
+    $legacy_slides_to_show = isset($data['slider_slides_to_show']) ? min(20, max(1, intval($data['slider_slides_to_show']))) : 1;
+    $sl_slides_to_show_pc = isset($data['slider_slides_to_show_pc']) ? min(20, max(1, intval($data['slider_slides_to_show_pc']))) : $legacy_slides_to_show;
+    $sl_slides_to_show_tab = isset($data['slider_slides_to_show_tab']) ? min(20, max(1, intval($data['slider_slides_to_show_tab']))) : $legacy_slides_to_show;
+    $sl_slides_to_show_sp = isset($data['slider_slides_to_show_sp']) ? min(20, max(1, intval($data['slider_slides_to_show_sp']))) : $legacy_slides_to_show;
+    $sl_loop      = isset($data['slider_loop'])        ? intval($data['slider_loop'])        : 1;
     $sl_autoplay  = isset($data['slider_autoplay'])  ? $data['slider_autoplay']  : 1;
     $sl_interval  = isset($data['slider_interval'])  ? $data['slider_interval']  : 5;
     $sl_arrows    = isset($data['slider_arrows'])    ? $data['slider_arrows']    : 1;
@@ -262,10 +266,20 @@ class Flex_Banner_Meta_Box
               <option value="fade" <?php selected($sl_animation, 'fade');  ?>>フェード</option>
             </select>
           </label>
-          <label>同時表示枚数（全デバイス共通）:
-            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][slider_slides_to_show]" value="<?php echo esc_attr($sl_slides_to_show); ?>" min="1" max="20" class="fb-slider-slides-to-show" style="width:60px;"> 枚
+          <label>PC（1025px以上）:
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][slider_slides_to_show_pc]" value="<?php echo esc_attr($sl_slides_to_show_pc); ?>" min="1" max="20" style="width:60px;"> 枚
           </label>
-          <p class="description" style="flex-basis:100%;margin:0;">表示枚数よりバナー数が少ない場合は、バナー数に合わせて表示します。フェードは1枚表示です。</p>
+          <label>TB（768〜1024px）:
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][slider_slides_to_show_tab]" value="<?php echo esc_attr($sl_slides_to_show_tab); ?>" min="1" max="20" style="width:60px;"> 枚
+          </label>
+          <label>SP（767px以下）:
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][slider_slides_to_show_sp]" value="<?php echo esc_attr($sl_slides_to_show_sp); ?>" min="1" max="20" style="width:60px;"> 枚
+          </label>
+          <label class="fb-inline-check">
+            <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_loop]" value="1" <?php checked($sl_loop, 1); ?>>
+            ループ（末尾から先頭へ繰り返す）
+          </label>
+          <p class="description" style="flex-basis:100%;margin:0;">表示期間内のバナー数が設定枚数以下の場合、その端末では移動せず静止表示になります。スライドが有効な場合、ループOFFでは端で停止します。フェードは常に1枚表示です。</p>
           <label class="fb-inline-check">
             <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_autoplay]" value="1" <?php checked($sl_autoplay, 1); ?>>
             自動再生
@@ -509,6 +523,10 @@ class Flex_Banner_Meta_Box
       foreach ($raw as $row_key => $row) {
         $mode = (isset($row['mode']) && in_array($row['mode'], $allowed_modes, true)) ? $row['mode'] : 'grid';
         $anim = (isset($row['slider_animation']) && in_array($row['slider_animation'], $allowed_anims, true)) ? $row['slider_animation'] : 'slide';
+        $legacy_slides_to_show = min(20, max(1, intval(isset($row['slider_slides_to_show']) ? $row['slider_slides_to_show'] : 1)));
+        $slides_to_show_pc = min(20, max(1, intval(isset($row['slider_slides_to_show_pc']) ? $row['slider_slides_to_show_pc'] : $legacy_slides_to_show)));
+        $slides_to_show_tab = min(20, max(1, intval(isset($row['slider_slides_to_show_tab']) ? $row['slider_slides_to_show_tab'] : $legacy_slides_to_show)));
+        $slides_to_show_sp = min(20, max(1, intval(isset($row['slider_slides_to_show_sp']) ? $row['slider_slides_to_show_sp'] : $legacy_slides_to_show)));
 
         $clean_row = array(
           'mode'             => $mode,
@@ -520,7 +538,11 @@ class Flex_Banner_Meta_Box
           'row_mb_pc'        => intval(isset($row['row_mb_pc'])                   ? $row['row_mb_pc']     : 24),
           'row_mb_sp'        => intval(isset($row['row_mb_sp'])                   ? $row['row_mb_sp']     : 16),
           'slider_animation' => $anim,
-          'slider_slides_to_show' => min(20, max(1, intval(isset($row['slider_slides_to_show']) ? $row['slider_slides_to_show'] : 1))),
+          'slider_slides_to_show' => $slides_to_show_pc,
+          'slider_slides_to_show_pc' => $slides_to_show_pc,
+          'slider_slides_to_show_tab' => $slides_to_show_tab,
+          'slider_slides_to_show_sp' => $slides_to_show_sp,
+          'slider_loop'       => isset($row['slider_loop']) ? 1 : 0,
           'slider_autoplay'  => isset($row['slider_autoplay'])                    ? 1 : 0,
           'slider_interval'  => min(60, max(1, intval(isset($row['slider_interval']) ? $row['slider_interval'] : 5))),
           'slider_arrows'    => isset($row['slider_arrows'])                      ? 1 : 0,

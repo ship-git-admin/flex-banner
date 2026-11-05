@@ -14,11 +14,10 @@
     if (!total) return;
 
     var animation = el.dataset.animation || 'slide';
-    var requestedSlidesToShow = parseInt(el.dataset.slidesToShow, 10) || 1;
-    var slidesToShow = Math.min(total, Math.max(1, requestedSlidesToShow));
-    if (animation === 'fade') slidesToShow = 1;
-    el.style.setProperty('--fb-slider-slide-width', (100 / slidesToShow) + '%');
-    var maxIndex = total - slidesToShow;
+    var slidesToShowPC = parseInt(el.dataset.slidesToShowPc, 10) || 1;
+    var slidesToShowTab = parseInt(el.dataset.slidesToShowTab, 10) || 1;
+    var slidesToShowSP = parseInt(el.dataset.slidesToShowSp, 10) || 1;
+    var loop = el.dataset.loop !== '0';
     var autoplay = el.dataset.autoplay === '1';
     var interval = parseInt(el.dataset.interval, 10) || 5000;
     var showArrows = el.dataset.arrows === '1';
@@ -29,34 +28,24 @@
     var dotsEl = el.querySelector('.fb-slider-dots');
     var current = 0;
     var timer = null;
+    var slidesToShow = 0;
+    var maxIndex = -1;
     var dots = [];
 
-    // 表示枚数に対して移動できる位置がない場合はナビを非表示
-    if (maxIndex <= 0) {
-      if (prevBtn) prevBtn.style.display = 'none';
-      if (nextBtn) nextBtn.style.display = 'none';
-      if (dotsEl) dotsEl.style.display = 'none';
-      if (animation === 'fade') slides[0] && slides[0].classList.add('is-active');
-      return;
-    }
+    function configuredSlidesToShow() {
+      var viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1025;
+      var configured;
 
-    // ドット生成
-    if (showDots && dotsEl) {
-      for (var d = 0; d <= maxIndex; d++) {
-        var dot = document.createElement('button');
-        dot.type = 'button';
-        dot.className = 'fb-slider-dot';
-        dot.setAttribute('aria-label', (d + 1) + '枚目から表示');
-        dotsEl.appendChild(dot);
-        dots.push(dot);
+      if (viewportWidth <= 767) {
+        configured = slidesToShowSP;
+      } else if (viewportWidth <= 1024) {
+        configured = slidesToShowTab;
+      } else {
+        configured = slidesToShowPC;
       }
-    } else if (dotsEl) {
-      dotsEl.style.display = 'none';
-    }
 
-    if (!showArrows) {
-      if (prevBtn) prevBtn.style.display = 'none';
-      if (nextBtn) nextBtn.style.display = 'none';
+      if (animation === 'fade') configured = 1;
+      return Math.min(total, Math.max(1, configured));
     }
 
     function updateDots() {
@@ -65,9 +54,48 @@
       });
     }
 
+    function updateControls() {
+      var canMove = maxIndex > 0;
+      if (prevBtn) {
+        prevBtn.style.display = showArrows && canMove ? '' : 'none';
+        prevBtn.disabled = !loop && current === 0;
+      }
+      if (nextBtn) {
+        nextBtn.style.display = showArrows && canMove ? '' : 'none';
+        nextBtn.disabled = !loop && current >= maxIndex;
+      }
+      if (dotsEl) dotsEl.style.display = showDots && canMove ? '' : 'none';
+    }
+
+    function rebuildDots() {
+      if (!dotsEl) return;
+      dotsEl.innerHTML = '';
+      dots = [];
+      if (!showDots || maxIndex <= 0) return;
+
+      for (var d = 0; d <= maxIndex; d++) {
+        (function (index) {
+          var dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'fb-slider-dot';
+          dot.setAttribute('aria-label', (index + 1) + '枚目から表示');
+          dot.addEventListener('click', function () {
+            goTo(index);
+            resetTimer();
+          });
+          dotsEl.appendChild(dot);
+          dots.push(dot);
+        })(d);
+      }
+    }
+
     function goTo(idx) {
-      if (idx < 0) idx = maxIndex;
-      if (idx > maxIndex) idx = 0;
+      if (loop) {
+        if (idx < 0) idx = maxIndex;
+        if (idx > maxIndex) idx = 0;
+      } else {
+        idx = Math.max(0, Math.min(maxIndex, idx));
+      }
 
       if (animation === 'fade') {
         slides[current].classList.remove('is-active');
@@ -78,23 +106,30 @@
       }
       current = idx;
       updateDots();
+      updateControls();
+      if (!loop && current >= maxIndex) stopTimer();
     }
 
     function next() {
+      if (!loop && current >= maxIndex) {
+        stopTimer();
+        return;
+      }
       goTo(current + 1);
     }
 
     function prev() {
+      if (!loop && current <= 0) return;
       goTo(current - 1);
     }
 
     function startTimer() {
-      if (!autoplay) return;
+      if (!autoplay || timer !== null || maxIndex <= 0 || (!loop && current >= maxIndex)) return;
       timer = setInterval(next, interval);
     }
 
     function stopTimer() {
-      clearInterval(timer);
+      if (timer !== null) clearInterval(timer);
       timer = null;
     }
 
@@ -116,14 +151,6 @@
         resetTimer();
       });
     }
-
-    // ドットクリック
-    dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () {
-        goTo(i);
-        resetTimer();
-      });
-    });
 
     // ホバーで一時停止
     el.addEventListener('mouseenter', stopTimer);
@@ -150,14 +177,36 @@
       passive: true
     });
 
-    // 初期化
-    if (animation === 'fade') {
-      slides.forEach(function (s, i) {
-        s.classList.toggle('is-active', i === 0);
-      });
+    function updateResponsiveSettings() {
+      var nextSlidesToShow = configuredSlidesToShow();
+      var nextMaxIndex = total - nextSlidesToShow;
+      if (nextSlidesToShow === slidesToShow && nextMaxIndex === maxIndex) return;
+
+      slidesToShow = nextSlidesToShow;
+      maxIndex = nextMaxIndex;
+      current = Math.min(current, maxIndex);
+
+      if (animation === 'fade') {
+        slides.forEach(function (slide, i) {
+          slide.classList.toggle('is-active', i === current);
+        });
+      } else {
+        var offset = current * (100 / slidesToShow);
+        track.style.transform = offset ? 'translateX(-' + offset + '%)' : 'translateX(0%)';
+      }
+
+      rebuildDots();
+      updateDots();
+      updateControls();
+      if (maxIndex <= 0 || (!loop && current >= maxIndex)) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
     }
-    updateDots();
-    startTimer();
+
+    window.addEventListener('resize', updateResponsiveSettings);
+    updateResponsiveSettings();
   }
 
   if (document.readyState === 'loading') {

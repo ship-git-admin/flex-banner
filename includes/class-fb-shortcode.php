@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.11');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.11', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.12');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.12', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -200,9 +200,14 @@ class Flex_Banner_Shortcode_Display
   private function render_slider_row($row, $items)
   {
     $animation = isset($row['slider_animation']) ? $row['slider_animation'] : 'slide';
-    $slides_to_show = isset($row['slider_slides_to_show']) ? min(count($items), min(20, max(1, intval($row['slider_slides_to_show'])))) : 1;
+    $legacy_slides_to_show = isset($row['slider_slides_to_show']) ? min(20, max(1, intval($row['slider_slides_to_show']))) : 1;
+    $slides_to_show_pc = min(count($items), isset($row['slider_slides_to_show_pc']) ? min(20, max(1, intval($row['slider_slides_to_show_pc']))) : $legacy_slides_to_show);
+    $slides_to_show_tab = min(count($items), isset($row['slider_slides_to_show_tab']) ? min(20, max(1, intval($row['slider_slides_to_show_tab']))) : $legacy_slides_to_show);
+    $slides_to_show_sp = min(count($items), isset($row['slider_slides_to_show_sp']) ? min(20, max(1, intval($row['slider_slides_to_show_sp']))) : $legacy_slides_to_show);
     if ($animation === 'fade') {
-      $slides_to_show = 1;
+      $slides_to_show_pc = 1;
+      $slides_to_show_tab = 1;
+      $slides_to_show_sp = 1;
     }
     $autoplay  = isset($row['slider_autoplay'])  ? intval($row['slider_autoplay']) : 1;
     $interval  = isset($row['slider_interval'])  ? intval($row['slider_interval']) : 5;
@@ -210,13 +215,23 @@ class Flex_Banner_Shortcode_Display
     $dots      = isset($row['slider_dots'])      ? intval($row['slider_dots']) : 1;
     $mb_pc     = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
     $mb_sp     = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
-    $slide_width = 100 / $slides_to_show;
-    $row_style = sprintf('--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;--fb-slider-slide-width:%.6F%%;', $mb_pc, $mb_sp, $slide_width);
+    $row_style = sprintf(
+      '--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;--fb-slider-slide-width-pc:%.6F%%;--fb-slider-slide-width-tab:%.6F%%;--fb-slider-slide-width-sp:%.6F%%;',
+      $mb_pc,
+      $mb_sp,
+      100 / $slides_to_show_pc,
+      100 / $slides_to_show_tab,
+      100 / $slides_to_show_sp
+    );
+    $loop = isset($row['slider_loop']) ? intval($row['slider_loop']) : 1;
   ?>
     <div class="fb-slider fb-row"
       style="<?php echo esc_attr($row_style); ?>"
       data-animation="<?php echo esc_attr($animation); ?>"
-      data-slides-to-show="<?php echo esc_attr($slides_to_show); ?>"
+      data-slides-to-show-pc="<?php echo esc_attr($slides_to_show_pc); ?>"
+      data-slides-to-show-tab="<?php echo esc_attr($slides_to_show_tab); ?>"
+      data-slides-to-show-sp="<?php echo esc_attr($slides_to_show_sp); ?>"
+      data-loop="<?php echo esc_attr($loop); ?>"
       data-autoplay="<?php echo esc_attr($autoplay); ?>"
       data-interval="<?php echo esc_attr($interval * 1000); ?>"
       data-arrows="<?php echo esc_attr($arrows); ?>"
