@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.20');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.20', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.21');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.21', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -239,8 +239,7 @@ class Flex_Banner_Shortcode_Display
     $gap_tab = max(0, intval(isset($row['gap_tab']) ? $row['gap_tab'] : (isset($row['gap_pc']) ? $row['gap_pc'] : 12)));
     $gap_sp = max(0, intval(isset($row['gap_sp']) ? $row['gap_sp'] : 10));
     $container_padding_sp = max(0, intval($container_padding_sp));
-    $sp_peek_shrink = max($container_padding_sp, $gap_sp + 12);
-    $sp_peek_shrink_per_slide = $sp_peek_shrink / max(1, $slides_to_show_sp);
+    $sp_peek_inset = max($container_padding_sp, $gap_sp + 12);
     $sp_peek_enabled = $animation === 'slide'
       && $container_padding_sp > 0
       && $slides_to_show_sp < count($items);
@@ -266,7 +265,7 @@ class Flex_Banner_Shortcode_Display
       $dot_color,
       $dot_active_color
     );
-    $row_style .= sprintf('--fb-slider-sp-peek-shrink-per-slide:%.6Fpx;', $sp_peek_shrink_per_slide);
+    $row_style .= sprintf('--fb-slider-peek-inset-sp:%.6Fpx;', $sp_peek_inset);
     $loop = isset($row['slider_loop']) ? intval($row['slider_loop']) : 1;
     $slider_class = 'fb-slider fb-row';
     if ($sp_peek_enabled) {

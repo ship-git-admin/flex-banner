@@ -33,6 +33,7 @@
     var maxIndex = -1;
     var infiniteLoopActive = false;
     var loopHeadClone = null;
+    var loopFirstClone = null;
     var loopTailClones = [];
     var loopResetPending = false;
     var dots = [];
@@ -63,6 +64,8 @@
       });
 
       if (!cloneCount) return;
+      var hasPeek = el.classList.contains('fb-slider--sp-peek');
+      if (hasPeek) cloneCount = Math.max(cloneCount, Math.min(total, slidesToShowSP + 1));
 
       function makeClone(slide) {
         var clone = slide.cloneNode(true);
@@ -75,6 +78,10 @@
         return clone;
       }
 
+      if (hasPeek) {
+        loopFirstClone = makeClone(slides[total - 2]);
+        track.insertBefore(loopFirstClone, slides[0]);
+      }
       loopHeadClone = makeClone(slides[total - 1]);
       track.insertBefore(loopHeadClone, slides[0]);
 
@@ -134,7 +141,7 @@
       if (targetIndex === total) targetSlide = loopTailClones[0];
       if (!targetSlide) return;
 
-      var firstTrackSlide = loopHeadClone || slides[0];
+      var firstTrackSlide = loopFirstClone || loopHeadClone || slides[0];
       var offset = targetSlide.offsetLeft - firstTrackSlide.offsetLeft;
       track.style.transform = offset ? 'translateX(-' + offset + 'px)' : 'translateX(0px)';
     }

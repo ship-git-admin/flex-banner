@@ -297,11 +297,14 @@
   }
 
   .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-viewport {
-    flex-basis: calc(100% + var(--fb-container-padding-sp, 0px));
+    flex-basis: calc(100% + var(--fb-container-padding-sp, 0px) + var(--fb-container-padding-sp, 0px));
+    margin-left: calc(0px - var(--fb-container-padding-sp, 0px));
   }
 
-  .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-track--slide .fb-slide {
-    flex-basis: calc(var(--fb-slider-slide-width-sp, 100%) - var(--fb-slider-sp-peek-shrink-per-slide, 0px));
+  .fb-container--sp-padding .fb-slider--sp-peek[data-animation="slide"] .fb-slider-track--slide {
+    position: relative;
+    left: var(--fb-slider-peek-inset-sp, 0px);
+    width: calc(100% - var(--fb-slider-peek-inset-sp, 0px) - var(--fb-slider-peek-inset-sp, 0px));
   }
 }
 
