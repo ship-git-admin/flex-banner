@@ -28,7 +28,7 @@ class Flex_Banner_Meta_Box
       'ショートコード',
       array($this, 'render_shortcode_meta_box'),
       'flex_banner_group',
-      'side',
+      'normal',
       'default'
     );
     add_meta_box(
@@ -36,8 +36,8 @@ class Flex_Banner_Meta_Box
       'コンテナ設定',
       array($this, 'render_container_meta_box'),
       'flex_banner_group',
-      'side',
-      'default'
+      'normal',
+      'high'
     );
   }
 
@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.15', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.15');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.16', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.16');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -144,60 +144,81 @@ class Flex_Banner_Meta_Box
     } else {
       $container_padding_sp = intval($container_padding_sp);
     }
-    $container_spacing_pc = intval(get_post_meta($post->ID, '_flex_banner_container_spacing_pc', true));
-    $container_spacing_tab = intval(get_post_meta($post->ID, '_flex_banner_container_spacing_tab', true));
-    $container_spacing_sp = intval(get_post_meta($post->ID, '_flex_banner_container_spacing_sp', true));
+    $legacy_spacing_pc = get_post_meta($post->ID, '_flex_banner_container_spacing_pc', true);
+    $legacy_spacing_tab = get_post_meta($post->ID, '_flex_banner_container_spacing_tab', true);
+    $legacy_spacing_sp = get_post_meta($post->ID, '_flex_banner_container_spacing_sp', true);
+    $container_spacing_top_pc = get_post_meta($post->ID, '_flex_banner_container_spacing_top_pc', true);
+    $container_spacing_bottom_pc = get_post_meta($post->ID, '_flex_banner_container_spacing_bottom_pc', true);
+    $container_spacing_top_tab = get_post_meta($post->ID, '_flex_banner_container_spacing_top_tab', true);
+    $container_spacing_bottom_tab = get_post_meta($post->ID, '_flex_banner_container_spacing_bottom_tab', true);
+    $container_spacing_top_sp = get_post_meta($post->ID, '_flex_banner_container_spacing_top_sp', true);
+    $container_spacing_bottom_sp = get_post_meta($post->ID, '_flex_banner_container_spacing_bottom_sp', true);
+
+    $container_spacing_top_pc = min(300, max(0, intval($container_spacing_top_pc === '' ? $legacy_spacing_pc : $container_spacing_top_pc)));
+    $container_spacing_bottom_pc = min(300, max(0, intval($container_spacing_bottom_pc === '' ? $legacy_spacing_pc : $container_spacing_bottom_pc)));
+    $container_spacing_top_tab = min(200, max(0, intval($container_spacing_top_tab === '' ? $legacy_spacing_tab : $container_spacing_top_tab)));
+    $container_spacing_bottom_tab = min(200, max(0, intval($container_spacing_bottom_tab === '' ? $legacy_spacing_tab : $container_spacing_bottom_tab)));
+    $container_spacing_top_sp = min(150, max(0, intval($container_spacing_top_sp === '' ? $legacy_spacing_sp : $container_spacing_top_sp)));
+    $container_spacing_bottom_sp = min(150, max(0, intval($container_spacing_bottom_sp === '' ? $legacy_spacing_sp : $container_spacing_bottom_sp)));
   ?>
     <div class="fb-container-settings-box">
-      <p class="description" style="margin-bottom:12px;">フロントエンドのバナー全体の横幅、左右の外側余白、上下の余白を設定します。画像の推奨サイズ計算にも反映されます。</p>
-      <table class="form-table" style="margin:0;">
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">PC最大幅</th>
-          <td style="padding:6px 0;">
-            <input type="number" id="fb-container-width-input" name="fb_container_width" value="<?php echo esc_attr($container_width); ?>" min="320" max="2560" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 944px</p>
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">PC：コンテナ上下の余白 (1025px〜)</th>
-          <td style="padding:6px 0;">
-            <input type="number" name="fb_container_spacing_pc" value="<?php echo esc_attr($container_spacing_pc); ?>" min="0" max="300" style="width:80px;"> px（上・下共通）
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">タブレット：コンテナ上下の余白 (768〜1024px)</th>
-          <td style="padding:6px 0;">
-            <input type="number" name="fb_container_spacing_tab" value="<?php echo esc_attr($container_spacing_tab); ?>" min="0" max="200" style="width:80px;"> px（上・下共通）
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">スマホ：コンテナ上下の余白 (〜767px)</th>
-          <td style="padding:6px 0;">
-            <input type="number" name="fb_container_spacing_sp" value="<?php echo esc_attr($container_spacing_sp); ?>" min="0" max="150" style="width:80px;"> px（上・下共通）
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">PC：外側の余白 (1025px〜)</th>
-          <td style="padding:6px 0;">
-            <input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="300" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">タブレット：外側の余白 (768〜1024px)</th>
-          <td style="padding:6px 0;">
-            <input type="number" id="fb-container-padding-tab-input" name="fb_container_padding_tab" value="<?php echo esc_attr($container_padding_tab); ?>" min="0" max="200" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 20px</p>
-          </td>
-        </tr>
-        <tr>
-          <th style="padding:6px 0;font-size:12px;">スマホ：外側の余白 (〜767px)</th>
-          <td style="padding:6px 0;">
-            <input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="150" style="width:80px;"> px
-            <p class="description" style="margin-top:4px;">デフォルト: 20px。SPスライダーを1枚表示にすると、余白を使って次の画像を少し見せます。</p>
-          </td>
-        </tr>
-      </table>
+      <p class="description">コンテナの最大幅、左右余白、上余白、下余白を端末ごとに設定できます。画像の推奨サイズ計算にも反映されます。</p>
+      <div class="fb-container-settings-grid">
+        <section class="fb-container-settings-group">
+          <h3>PC（1025px以上）</h3>
+          <label class="fb-container-settings-field">
+            <span>最大幅</span>
+            <span class="fb-container-settings-input"><input type="number" id="fb-container-width-input" name="fb_container_width" value="<?php echo esc_attr($container_width); ?>" min="320" max="2560"> px</span>
+          </label>
+          <p class="description">最大幅の初期値: 944px</p>
+          <label class="fb-container-settings-field">
+            <span>左・右の余白</span>
+            <span class="fb-container-settings-input"><input type="number" id="fb-container-padding-pc-input" name="fb_container_padding_pc" value="<?php echo esc_attr($container_padding_pc); ?>" min="0" max="300"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>上余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_top_pc" value="<?php echo esc_attr($container_spacing_top_pc); ?>" min="0" max="300"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>下余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_bottom_pc" value="<?php echo esc_attr($container_spacing_bottom_pc); ?>" min="0" max="300"> px</span>
+          </label>
+        </section>
+
+        <section class="fb-container-settings-group">
+          <h3>タブレット（768〜1024px）</h3>
+          <label class="fb-container-settings-field">
+            <span>左・右の余白</span>
+            <span class="fb-container-settings-input"><input type="number" id="fb-container-padding-tab-input" name="fb_container_padding_tab" value="<?php echo esc_attr($container_padding_tab); ?>" min="0" max="200"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>上余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_top_tab" value="<?php echo esc_attr($container_spacing_top_tab); ?>" min="0" max="200"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>下余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_bottom_tab" value="<?php echo esc_attr($container_spacing_bottom_tab); ?>" min="0" max="200"> px</span>
+          </label>
+          <p class="description">左右余白の初期値: 20px</p>
+        </section>
+
+        <section class="fb-container-settings-group">
+          <h3>スマートフォン（767px以下）</h3>
+          <label class="fb-container-settings-field">
+            <span>左・右の余白</span>
+            <span class="fb-container-settings-input"><input type="number" id="fb-container-padding-sp-input" name="fb_container_padding_sp" value="<?php echo esc_attr($container_padding_sp); ?>" min="0" max="150"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>上余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_top_sp" value="<?php echo esc_attr($container_spacing_top_sp); ?>" min="0" max="150"> px</span>
+          </label>
+          <label class="fb-container-settings-field">
+            <span>下余白</span>
+            <span class="fb-container-settings-input"><input type="number" name="fb_container_spacing_bottom_sp" value="<?php echo esc_attr($container_spacing_bottom_sp); ?>" min="0" max="150"> px</span>
+          </label>
+          <p class="description">左右余白の初期値: 20px。スライダー1枚表示時は次画像のチラ見せにも使います。</p>
+        </section>
+      </div>
     </div>
   <?php
   }
@@ -555,17 +576,14 @@ class Flex_Banner_Meta_Box
       $cps = min(150, max(0, intval($_POST['fb_container_padding_sp'])));
       update_post_meta($post_id, '_flex_banner_container_padding_sp', $cps);
     }
-    if (isset($_POST['fb_container_spacing_pc'])) {
-      $cvs_pc = min(300, max(0, intval($_POST['fb_container_spacing_pc'])));
-      update_post_meta($post_id, '_flex_banner_container_spacing_pc', $cvs_pc);
-    }
-    if (isset($_POST['fb_container_spacing_tab'])) {
-      $cvs_tab = min(200, max(0, intval($_POST['fb_container_spacing_tab'])));
-      update_post_meta($post_id, '_flex_banner_container_spacing_tab', $cvs_tab);
-    }
-    if (isset($_POST['fb_container_spacing_sp'])) {
-      $cvs_sp = min(150, max(0, intval($_POST['fb_container_spacing_sp'])));
-      update_post_meta($post_id, '_flex_banner_container_spacing_sp', $cvs_sp);
+    foreach (array('pc' => 300, 'tab' => 200, 'sp' => 150) as $device => $max_spacing) {
+      if (isset($_POST['fb_container_spacing_top_' . $device], $_POST['fb_container_spacing_bottom_' . $device])) {
+        $spacing_top = min($max_spacing, max(0, intval($_POST['fb_container_spacing_top_' . $device])));
+        $spacing_bottom = min($max_spacing, max(0, intval($_POST['fb_container_spacing_bottom_' . $device])));
+        update_post_meta($post_id, '_flex_banner_container_spacing_top_' . $device, $spacing_top);
+        update_post_meta($post_id, '_flex_banner_container_spacing_bottom_' . $device, $spacing_bottom);
+        update_post_meta($post_id, '_flex_banner_container_spacing_' . $device, $spacing_top);
+      }
     }
 
     $allowed_modes     = array('grid', 'slider');

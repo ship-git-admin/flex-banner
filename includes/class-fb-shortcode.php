@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.15');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.15', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.16');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.16', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -88,9 +88,21 @@ class Flex_Banner_Shortcode_Display
     } else {
       $container_padding_sp = intval($container_padding_sp);
     }
-    $container_spacing_pc = min(300, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_pc', true))));
-    $container_spacing_tab = min(200, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_tab', true))));
-    $container_spacing_sp = min(150, max(0, intval(get_post_meta($post_id, '_flex_banner_container_spacing_sp', true))));
+    $legacy_spacing_pc = get_post_meta($post_id, '_flex_banner_container_spacing_pc', true);
+    $legacy_spacing_tab = get_post_meta($post_id, '_flex_banner_container_spacing_tab', true);
+    $legacy_spacing_sp = get_post_meta($post_id, '_flex_banner_container_spacing_sp', true);
+    $spacing_top_pc = get_post_meta($post_id, '_flex_banner_container_spacing_top_pc', true);
+    $spacing_bottom_pc = get_post_meta($post_id, '_flex_banner_container_spacing_bottom_pc', true);
+    $spacing_top_tab = get_post_meta($post_id, '_flex_banner_container_spacing_top_tab', true);
+    $spacing_bottom_tab = get_post_meta($post_id, '_flex_banner_container_spacing_bottom_tab', true);
+    $spacing_top_sp = get_post_meta($post_id, '_flex_banner_container_spacing_top_sp', true);
+    $spacing_bottom_sp = get_post_meta($post_id, '_flex_banner_container_spacing_bottom_sp', true);
+    $container_spacing_top_pc = min(300, max(0, intval($spacing_top_pc === '' ? $legacy_spacing_pc : $spacing_top_pc)));
+    $container_spacing_bottom_pc = min(300, max(0, intval($spacing_bottom_pc === '' ? $legacy_spacing_pc : $spacing_bottom_pc)));
+    $container_spacing_top_tab = min(200, max(0, intval($spacing_top_tab === '' ? $legacy_spacing_tab : $spacing_top_tab)));
+    $container_spacing_bottom_tab = min(200, max(0, intval($spacing_bottom_tab === '' ? $legacy_spacing_tab : $spacing_bottom_tab)));
+    $container_spacing_top_sp = min(150, max(0, intval($spacing_top_sp === '' ? $legacy_spacing_sp : $spacing_top_sp)));
+    $container_spacing_bottom_sp = min(150, max(0, intval($spacing_bottom_sp === '' ? $legacy_spacing_sp : $spacing_bottom_sp)));
 
     // スライダーが含まれる場合はJSをエンキュー
     $has_slider = false;
@@ -112,8 +124,8 @@ class Flex_Banner_Shortcode_Display
       /* PC (1025px ~) */
       #<?php echo esc_attr($container_id); ?> {
         max-width: <?php echo intval($container_width); ?>px;
-        padding-top: <?php echo intval($container_spacing_pc); ?>px;
-        padding-bottom: <?php echo intval($container_spacing_pc); ?>px;
+        padding-top: <?php echo intval($container_spacing_top_pc); ?>px;
+        padding-bottom: <?php echo intval($container_spacing_bottom_pc); ?>px;
         padding-left: <?php echo intval($container_padding_pc); ?>px;
         padding-right: <?php echo intval($container_padding_pc); ?>px;
         --fb-container-padding-sp: <?php echo intval($container_padding_sp); ?>px;
@@ -122,8 +134,8 @@ class Flex_Banner_Shortcode_Display
       /* Tablet (768px ~ 1024px) */
       @media screen and (max-width: 1024px) {
         #<?php echo esc_attr($container_id); ?> {
-          padding-top: <?php echo intval($container_spacing_tab); ?>px;
-          padding-bottom: <?php echo intval($container_spacing_tab); ?>px;
+          padding-top: <?php echo intval($container_spacing_top_tab); ?>px;
+          padding-bottom: <?php echo intval($container_spacing_bottom_tab); ?>px;
           padding-left: <?php echo intval($container_padding_tab); ?>px;
           padding-right: <?php echo intval($container_padding_tab); ?>px;
         }
@@ -132,8 +144,8 @@ class Flex_Banner_Shortcode_Display
       /* Smartphone (~ 767px) */
       @media screen and (max-width: 767px) {
         #<?php echo esc_attr($container_id); ?> {
-          padding-top: <?php echo intval($container_spacing_sp); ?>px;
-          padding-bottom: <?php echo intval($container_spacing_sp); ?>px;
+          padding-top: <?php echo intval($container_spacing_top_sp); ?>px;
+          padding-bottom: <?php echo intval($container_spacing_bottom_sp); ?>px;
           padding-left: <?php echo intval($container_padding_sp); ?>px;
           padding-right: <?php echo intval($container_padding_sp); ?>px;
         }
