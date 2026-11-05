@@ -173,7 +173,8 @@
 }
 
 .fb-grid-settings,
-.fb-slider-settings {
+.fb-slider-settings,
+.fb-gap-settings {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -181,7 +182,8 @@
 }
 
 .fb-grid-settings label,
-.fb-slider-settings label {
+.fb-slider-settings label,
+.fb-gap-settings label {
   font-size: 12px;
   font-weight: 600;
   color: #50575e;
@@ -189,6 +191,19 @@
   align-items: center;
   gap: 5px;
   white-space: nowrap;
+}
+
+.fb-gap-settings {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ececec;
+}
+
+.fb-gap-settings__title {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: #50575e;
 }
 
 .fb-inline-check {

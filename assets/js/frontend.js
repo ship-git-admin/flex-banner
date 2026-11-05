@@ -26,6 +26,7 @@
     var prevBtn = el.querySelector('.fb-slider-prev');
     var nextBtn = el.querySelector('.fb-slider-next');
     var dotsEl = el.querySelector('.fb-slider-dots');
+    var navEl = el.querySelector('.fb-slider-nav');
     var current = 0;
     var timer = null;
     var slidesToShow = 0;
@@ -56,6 +57,7 @@
 
     function updateControls() {
       var canMove = maxIndex > 0;
+      if (navEl) navEl.style.display = canMove && (showArrows || showDots) ? '' : 'none';
       if (prevBtn) {
         prevBtn.style.display = showArrows && canMove ? '' : 'none';
         prevBtn.disabled = !loop && current === 0;
@@ -89,6 +91,11 @@
       }
     }
 
+    function updateTrackPosition() {
+      var offset = slides[current].offsetLeft - slides[0].offsetLeft;
+      track.style.transform = offset ? 'translateX(-' + offset + 'px)' : 'translateX(0px)';
+    }
+
     function goTo(idx) {
       if (loop) {
         if (idx < 0) idx = maxIndex;
@@ -100,11 +107,9 @@
       if (animation === 'fade') {
         slides[current].classList.remove('is-active');
         slides[idx].classList.add('is-active');
-      } else {
-        var offset = idx * (100 / slidesToShow);
-        track.style.transform = offset ? 'translateX(-' + offset + '%)' : 'translateX(0%)';
       }
       current = idx;
+      if (animation !== 'fade') updateTrackPosition();
       updateDots();
       updateControls();
       if (!loop && current >= maxIndex) stopTimer();
@@ -180,7 +185,7 @@
     function updateResponsiveSettings() {
       var nextSlidesToShow = configuredSlidesToShow();
       var nextMaxIndex = total - nextSlidesToShow;
-      if (nextSlidesToShow === slidesToShow && nextMaxIndex === maxIndex) return;
+      var slideCountChanged = nextSlidesToShow !== slidesToShow;
 
       slidesToShow = nextSlidesToShow;
       maxIndex = nextMaxIndex;
@@ -191,11 +196,10 @@
           slide.classList.toggle('is-active', i === current);
         });
       } else {
-        var offset = current * (100 / slidesToShow);
-        track.style.transform = offset ? 'translateX(-' + offset + '%)' : 'translateX(0%)';
+        updateTrackPosition();
       }
 
-      rebuildDots();
+      if (slideCountChanged) rebuildDots();
       updateDots();
       updateControls();
       if (maxIndex <= 0 || (!loop && current >= maxIndex)) {

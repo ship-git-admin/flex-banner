@@ -54,8 +54,8 @@ class Flex_Banner_Meta_Box
 
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.12', true);
-    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.12');
+    wp_enqueue_script('fb-admin-js', FB_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '2.4.13', true);
+    wp_enqueue_style('fb-admin-css', FB_PLUGIN_URL . 'assets/css/admin.css', array(), '2.4.13');
 
     // コンテナ幅をJSに渡す
     $container_width = intval(get_post_meta($post->ID, '_flex_banner_container_width', true));
@@ -201,6 +201,12 @@ class Flex_Banner_Meta_Box
     $sl_slides_to_show_tab = isset($data['slider_slides_to_show_tab']) ? min(20, max(1, intval($data['slider_slides_to_show_tab']))) : $legacy_slides_to_show;
     $sl_slides_to_show_sp = isset($data['slider_slides_to_show_sp']) ? min(20, max(1, intval($data['slider_slides_to_show_sp']))) : $legacy_slides_to_show;
     $sl_loop      = isset($data['slider_loop'])        ? intval($data['slider_loop'])        : 1;
+    $sl_arrow_color = isset($data['slider_arrow_color']) && is_string($data['slider_arrow_color']) ? sanitize_hex_color($data['slider_arrow_color']) : '';
+    $sl_dot_color = isset($data['slider_dot_color']) && is_string($data['slider_dot_color']) ? sanitize_hex_color($data['slider_dot_color']) : '';
+    $sl_dot_active_color = isset($data['slider_dot_active_color']) && is_string($data['slider_dot_active_color']) ? sanitize_hex_color($data['slider_dot_active_color']) : '';
+    $sl_arrow_color = $sl_arrow_color ? $sl_arrow_color : '#78aa9b';
+    $sl_dot_color = $sl_dot_color ? $sl_dot_color : '#dedede';
+    $sl_dot_active_color = $sl_dot_active_color ? $sl_dot_active_color : '#1e8061';
     $sl_autoplay  = isset($data['slider_autoplay'])  ? $data['slider_autoplay']  : 1;
     $sl_interval  = isset($data['slider_interval'])  ? $data['slider_interval']  : 5;
     $sl_arrows    = isset($data['slider_arrows'])    ? $data['slider_arrows']    : 1;
@@ -247,16 +253,20 @@ class Flex_Banner_Meta_Box
               <option value="2" <?php selected($cols_sp, 2); ?>>2枚並べる</option>
             </select>
           </label>
+          <span class="fb-size-guide">推奨サイズ: <span class="fb-guide-pc"></span> / <span class="fb-guide-sp"></span></span>
+        </div>
+
+        <div class="fb-gap-settings">
+          <span class="fb-gap-settings__title">アイテム間余白（グリッド・スライダー共通）</span>
           <label>PC余白:
-            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_pc]" value="<?php echo intval($gap_pc); ?>" class="fb-gap-pc" style="width:55px;"> px
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_pc]" value="<?php echo intval($gap_pc); ?>" min="0" class="fb-gap-pc" style="width:55px;"> px
           </label>
           <label>タブレット余白 (768〜1024px):
-            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_tab]" value="<?php echo intval($gap_tab); ?>" class="fb-gap-tab" style="width:55px;"> px
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_tab]" value="<?php echo intval($gap_tab); ?>" min="0" class="fb-gap-tab" style="width:55px;"> px
           </label>
           <label>スマホ余白:
-            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_sp]" value="<?php echo intval($gap_sp); ?>" class="fb-gap-sp" style="width:55px;"> px
+            <input type="number" name="fb_data[<?php echo esc_attr($index); ?>][gap_sp]" value="<?php echo intval($gap_sp); ?>" min="0" class="fb-gap-sp" style="width:55px;"> px
           </label>
-          <span class="fb-size-guide">推奨サイズ: <span class="fb-guide-pc"></span> / <span class="fb-guide-sp"></span></span>
         </div>
 
         <div class="fb-slider-settings <?php echo !$is_slider ? 'fb-hidden' : ''; ?>">
@@ -279,7 +289,17 @@ class Flex_Banner_Meta_Box
             <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_loop]" value="1" <?php checked($sl_loop, 1); ?>>
             ループ（末尾から先頭へ繰り返す）
           </label>
+          <label>矢印色:
+            <input type="color" name="fb_data[<?php echo esc_attr($index); ?>][slider_arrow_color]" value="<?php echo esc_attr($sl_arrow_color); ?>" style="width:42px;height:28px;padding:2px;">
+          </label>
+          <label>ドット色:
+            <input type="color" name="fb_data[<?php echo esc_attr($index); ?>][slider_dot_color]" value="<?php echo esc_attr($sl_dot_color); ?>" style="width:42px;height:28px;padding:2px;">
+          </label>
+          <label>選択中ドット色:
+            <input type="color" name="fb_data[<?php echo esc_attr($index); ?>][slider_dot_active_color]" value="<?php echo esc_attr($sl_dot_active_color); ?>" style="width:42px;height:28px;padding:2px;">
+          </label>
           <p class="description" style="flex-basis:100%;margin:0;">表示期間内のバナー数が設定枚数以下の場合、その端末では移動せず静止表示になります。スライドが有効な場合、ループOFFでは端で停止します。フェードは常に1枚表示です。</p>
+          <p class="description" style="flex-basis:100%;margin:0;">ナビゲーションはスライダー下部に「矢印・ドット・矢印」の順で表示します。色は矢印、通常ドット、選択中ドットごとに変更できます。</p>
           <label class="fb-inline-check">
             <input type="checkbox" name="fb_data[<?php echo esc_attr($index); ?>][slider_autoplay]" value="1" <?php checked($sl_autoplay, 1); ?>>
             自動再生
@@ -527,6 +547,12 @@ class Flex_Banner_Meta_Box
         $slides_to_show_pc = min(20, max(1, intval(isset($row['slider_slides_to_show_pc']) ? $row['slider_slides_to_show_pc'] : $legacy_slides_to_show)));
         $slides_to_show_tab = min(20, max(1, intval(isset($row['slider_slides_to_show_tab']) ? $row['slider_slides_to_show_tab'] : $legacy_slides_to_show)));
         $slides_to_show_sp = min(20, max(1, intval(isset($row['slider_slides_to_show_sp']) ? $row['slider_slides_to_show_sp'] : $legacy_slides_to_show)));
+        $arrow_color = isset($row['slider_arrow_color']) && is_string($row['slider_arrow_color']) ? sanitize_hex_color($row['slider_arrow_color']) : '';
+        $dot_color = isset($row['slider_dot_color']) && is_string($row['slider_dot_color']) ? sanitize_hex_color($row['slider_dot_color']) : '';
+        $dot_active_color = isset($row['slider_dot_active_color']) && is_string($row['slider_dot_active_color']) ? sanitize_hex_color($row['slider_dot_active_color']) : '';
+        $arrow_color = $arrow_color ? $arrow_color : '#78aa9b';
+        $dot_color = $dot_color ? $dot_color : '#dedede';
+        $dot_active_color = $dot_active_color ? $dot_active_color : '#1e8061';
 
         $clean_row = array(
           'mode'             => $mode,
@@ -543,6 +569,9 @@ class Flex_Banner_Meta_Box
           'slider_slides_to_show_tab' => $slides_to_show_tab,
           'slider_slides_to_show_sp' => $slides_to_show_sp,
           'slider_loop'       => isset($row['slider_loop']) ? 1 : 0,
+          'slider_arrow_color' => $arrow_color,
+          'slider_dot_color' => $dot_color,
+          'slider_dot_active_color' => $dot_active_color,
           'slider_autoplay'  => isset($row['slider_autoplay'])                    ? 1 : 0,
           'slider_interval'  => min(60, max(1, intval(isset($row['slider_interval']) ? $row['slider_interval'] : 5))),
           'slider_arrows'    => isset($row['slider_arrows'])                      ? 1 : 0,

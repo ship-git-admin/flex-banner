@@ -256,6 +256,7 @@
 /* スライドアニメーション */
 .fb-slider-track--slide {
   transition: transform 0.55s cubic-bezier(.4, 0, .2, 1);
+  column-gap: var(--fb-gap-pc, 0px);
 }
 
 .fb-slider-track--slide .fb-slide {
@@ -265,12 +266,20 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .fb-slider-track--slide {
+    column-gap: var(--fb-gap-tab, var(--fb-gap-pc, 0px));
+  }
+
   .fb-slider-track--slide .fb-slide {
     flex-basis: var(--fb-slider-slide-width-tab, 100%);
   }
 }
 
 @media screen and (max-width: 767px) {
+  .fb-slider-track--slide {
+    column-gap: var(--fb-gap-sp, var(--fb-gap-tab, 0px));
+  }
+
   .fb-slider-track--slide .fb-slide {
     flex-basis: var(--fb-slider-slide-width-sp, 100%);
   }
@@ -305,30 +314,39 @@
 }
 
 /* ====================================================================
-   スライダー：矢印ナビ
+   スライダー：下部ナビ
    ==================================================================== */
+.fb-slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 24px;
+  margin-top: 12px;
+}
+
 .fb-slider-prev,
 .fb-slider-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, .42);
+  position: static;
+  transform: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
+  background: transparent;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  transition: background 0.2s;
+  transition: opacity 0.2s;
 }
 
 .fb-slider-prev:hover,
 .fb-slider-next:hover {
-  background: rgba(0, 0, 0, .68);
+  background: transparent;
+  opacity: .7;
 }
 
 .fb-slider-prev:disabled,
@@ -337,76 +355,39 @@
   cursor: default;
 }
 
-.fb-slider-prev {
-  left: 12px;
-}
-
-.fb-slider-next {
-  right: 12px;
-}
-
 .fb-slider-prev svg,
 .fb-slider-next svg {
-  width: 20px;
-  height: 20px;
-  stroke: #fff;
+  width: 13px;
+  height: 13px;
+  stroke: var(--fb-slider-arrow-color, #78aa9b);
   display: block;
 }
 
-/* SP：矢印を少し小さく */
-@media screen and (max-width: 767px) {
-
-  .fb-slider-prev,
-  .fb-slider-next {
-    width: 34px;
-    height: 34px;
-  }
-
-  .fb-slider-prev {
-    left: 6px;
-  }
-
-  .fb-slider-next {
-    right: 6px;
-  }
-
-  .fb-slider-prev svg,
-  .fb-slider-next svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* ====================================================================
-   スライダー：ドットナビ
-   ==================================================================== */
 .fb-slider-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: static;
+  transform: none;
   display: flex;
-  gap: 7px;
-  z-index: 10;
+  align-items: center;
+  gap: 18px;
 }
 
 .fb-slider-dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, .55);
+  background: var(--fb-slider-dot-color, #dedede);
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, opacity 0.2s;
   flex-shrink: 0;
 }
 
 .fb-slider-dot.is-active {
-  background: #fff;
+  background: var(--fb-slider-dot-active-color, #1e8061);
   transform: scale(1.25);
 }
 
 .fb-slider-dot:hover:not(.is-active) {
-  background: rgba(255, 255, 255, .8);
+  opacity: .65;
 }

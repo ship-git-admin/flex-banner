@@ -14,8 +14,8 @@ class Flex_Banner_Shortcode_Display
 
   public function enqueue_assets()
   {
-    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.12');
-    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.12', true);
+    wp_register_style('fb-frontend-style', FB_PLUGIN_URL . 'assets/css/style.css', array(), '2.4.13');
+    wp_register_script('fb-frontend-js', FB_PLUGIN_URL . 'assets/js/frontend.js', array(), '2.4.13', true);
     if (function_exists('wp_script_add_data')) {
       wp_script_add_data('fb-frontend-js', 'strategy', 'defer');
     }
@@ -213,15 +213,30 @@ class Flex_Banner_Shortcode_Display
     $interval  = isset($row['slider_interval'])  ? intval($row['slider_interval']) : 5;
     $arrows    = isset($row['slider_arrows'])    ? intval($row['slider_arrows']) : 1;
     $dots      = isset($row['slider_dots'])      ? intval($row['slider_dots']) : 1;
+    $gap_pc = max(0, intval(isset($row['gap_pc']) ? $row['gap_pc'] : 12));
+    $gap_tab = max(0, intval(isset($row['gap_tab']) ? $row['gap_tab'] : (isset($row['gap_pc']) ? $row['gap_pc'] : 12)));
+    $gap_sp = max(0, intval(isset($row['gap_sp']) ? $row['gap_sp'] : 10));
     $mb_pc     = isset($row['row_mb_pc']) ? intval($row['row_mb_pc']) : 24;
     $mb_sp     = isset($row['row_mb_sp']) ? intval($row['row_mb_sp']) : 16;
+    $arrow_color = isset($row['slider_arrow_color']) && is_string($row['slider_arrow_color']) ? sanitize_hex_color($row['slider_arrow_color']) : '';
+    $dot_color = isset($row['slider_dot_color']) && is_string($row['slider_dot_color']) ? sanitize_hex_color($row['slider_dot_color']) : '';
+    $dot_active_color = isset($row['slider_dot_active_color']) && is_string($row['slider_dot_active_color']) ? sanitize_hex_color($row['slider_dot_active_color']) : '';
+    $arrow_color = $arrow_color ? $arrow_color : '#78aa9b';
+    $dot_color = $dot_color ? $dot_color : '#dedede';
+    $dot_active_color = $dot_active_color ? $dot_active_color : '#1e8061';
     $row_style = sprintf(
-      '--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;--fb-slider-slide-width-pc:%.6F%%;--fb-slider-slide-width-tab:%.6F%%;--fb-slider-slide-width-sp:%.6F%%;',
+      '--fb-row-mb-pc:%dpx;--fb-row-mb-sp:%dpx;--fb-gap-pc:%dpx;--fb-gap-tab:%dpx;--fb-gap-sp:%dpx;--fb-slider-slide-width-pc:%s;--fb-slider-slide-width-tab:%s;--fb-slider-slide-width-sp:%s;--fb-slider-arrow-color:%s;--fb-slider-dot-color:%s;--fb-slider-dot-active-color:%s;',
       $mb_pc,
       $mb_sp,
-      100 / $slides_to_show_pc,
-      100 / $slides_to_show_tab,
-      100 / $slides_to_show_sp
+      $gap_pc,
+      $gap_tab,
+      $gap_sp,
+      $this->slider_slide_width($slides_to_show_pc, $gap_pc),
+      $this->slider_slide_width($slides_to_show_tab, $gap_tab),
+      $this->slider_slide_width($slides_to_show_sp, $gap_sp),
+      $arrow_color,
+      $dot_color,
+      $dot_active_color
     );
     $loop = isset($row['slider_loop']) ? intval($row['slider_loop']) : 1;
   ?>
@@ -243,23 +258,43 @@ class Flex_Banner_Shortcode_Display
           </div>
         <?php endforeach; ?>
       </div>
-      <?php if ($arrows) : ?>
-        <button type="button" class="fb-slider-prev" aria-label="前へ">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <button type="button" class="fb-slider-next" aria-label="次へ">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-      <?php endif; ?>
-      <?php if ($dots) : ?>
-        <div class="fb-slider-dots"></div>
+      <?php if ($arrows || $dots) : ?>
+        <div class="fb-slider-nav" role="group" aria-label="スライダーナビゲーション">
+          <?php if ($arrows) : ?>
+            <button type="button" class="fb-slider-prev" aria-label="前へ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+          <?php endif; ?>
+          <?php if ($dots) : ?>
+            <div class="fb-slider-dots"></div>
+          <?php endif; ?>
+          <?php if ($arrows) : ?>
+            <button type="button" class="fb-slider-next" aria-label="次へ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          <?php endif; ?>
+        </div>
       <?php endif; ?>
     </div>
     <?php
+  }
+
+  private function slider_slide_width($slides_to_show, $gap)
+  {
+    $slides_to_show = max(1, intval($slides_to_show));
+    $gap = max(0, intval($gap));
+    $percent = 100 / $slides_to_show;
+    $gap_reduction = ($gap * ($slides_to_show - 1)) / $slides_to_show;
+
+    if ($gap_reduction <= 0) {
+      return sprintf('%.6F%%', $percent);
+    }
+
+    return sprintf('calc(%.6F%% - %.6Fpx)', $percent, $gap_reduction);
   }
 
   /* ------------------------------------------------------------------ */
